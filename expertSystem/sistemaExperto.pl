@@ -91,7 +91,7 @@ saveFacts([H|T], Actual) :-
 
 %% Intenta adivinar en lo que pensó el usuario
 makeGuess(Guess, QuestionNum, ActiveList) :-
-  writeLine([nl, '¿Estás pensando en un ', Guess, '?', nl]),
+  writeLine([nl, '¿Estás pensando en  "', Guess, '"?', nl]),
   listen(Answer),
   (
     Answer = 'si' -> onLose(QuestionNum, Guess);
@@ -189,21 +189,21 @@ onQuit :-
 onWin(ActiveList) :-
   writeLine([nl, '¡Vaya! Me doy, ¿Qué estabas pensando?', nl]),
   listen(Actual),
-  writeLine([nl, 'Gracias, conoceré la respuesta para: ', Actual, ' la próxima vez.', nl]),
+  writeLine([nl, 'Gracias, conoceré la respuesta para "', Actual, '" la próxima vez.', nl]),
   saveFacts(ActiveList, Actual),
   writeKB,
   true.
 
 %% Llamado cuando el sistema adivina correctamente
 onLose(QuestionNum, Guess) :-
-  writeLine([nl, 'Averigüé que estás pensando en : "', Guess, '" y sólo me tomó ',
+  writeLine([nl, 'Averigüé que estás pensando en "', Guess, '" con tan solo ',
     QuestionNum, ' preguntas.', nl, '¡Mejor suerte la próxima vez!']),
   true.
 
 %% Llamado cuando el usuario da una respuesta invalida. Muestra el mensaje informandolo de ello
 onInvalidResponse(Response) :-
-  writeLine(['"', Response, '" is not a valid response, please type "yes", "no" or "maybe".',
-    nl, 'To quit the game, type "quit".', nl]).
+  writeLine(['"', Response, '" no es una respuesta válida, por favor inserte "sí", "no" o "quizá".',
+    nl, 'Para salir del juego, escriba "salir".', nl]).
 
 %% Analiza la linea de entrada para realizar la accion apropiada
 parse(Input, [Pred, Question], QuestionList, ActiveList, QuestionNum) :-
@@ -244,7 +244,7 @@ parse(Input, [Pred, Question], QuestionList, ActiveList, QuestionNum) :-
 %% Loop principal
 botLoop([Pred, Question], QuestionList, ActiveList, QuestionNum) :-
   nl,
-  writeLine(['Question ', QuestionNum, ': ', Question, nl]),
+  writeLine(['Pregunta ', QuestionNum, ': ', Question, nl]),
   listen(Input),
   parse(Input, [Pred, Question], QuestionList, ActiveList, QuestionNum).
 

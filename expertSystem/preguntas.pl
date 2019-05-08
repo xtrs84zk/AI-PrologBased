@@ -9,6 +9,7 @@
 %  esta pensando. Debe tener una respuesta binaria.
 
 questions([
+  [legendario, '¿Es un pokémon legendario?'],
   [colorAmarillo,  '¿Es color amarillo?'],
   [colorVerde,      '¿Es color verde?'],
   [tipoElectrico,  '¿Es tipo eléctrico?'],
@@ -17,6 +18,5 @@ questions([
   [esRelevanteEnLaMeta, '¿Es relevante en la meta?'],
   [primerEvolucion,    '¿Es la primer evolución de una familia?'],
   [generacionUno,  '¿Pertenece a la primera generación?'],
-  [generacionDos,  '¿Pertenece a la segunda generación?'],
-  [legendario, '¿Es un pokémon legendario?']
+  [generacionDos,  '¿Pertenece a la segunda generación?']
 ]).

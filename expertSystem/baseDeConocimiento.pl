@@ -55,7 +55,7 @@ kb(tipoElectrico(no,caterpie)).
 kb(tipoElectrico(no,spoink)).
 kb(tipoElectrico(no,rattata)).
 kb(tipoElectrico(no,clamperl)).
-kb(tipoElectrico(yes,dragonite)).
+kb(tipoElectrico(no,dragonite)).
 kb(tipoElectrico(no,cloyster)).
 
 kb(tipoRoca(no,pikachu)).
