@@ -1,22 +1,15 @@
-%  Base de datos de preguntas
-%  Cada pregunta se conforma de (Predicado, Mensaje).
-%
-%  -'Predicado' is un predicado usado para llenar la base de
-%  conocimiento para solo incluir las respuestas que concuerden con las
-%  del usuario.
-%  -'Mensaje' es un mensaje que se le muestra al usuario para
-%  preguntarle sobre una propiedad de la entidad que el sistema experto
-%  esta pensando. Debe tener una respuesta binaria.
-
+% Base de datos de preguntas % Cada pregunta se conforma de (Predicado, Mensaje).
+%%-'Predicado' es un predicado usado para llenar la base de conocimiento para sÃ³lo incluir las respuestas que concuerden con las % del usuario.
+%%-'Mensaje' es un mensaje que se le muestra al usuario para % preguntarle sobre una propiedad de la entidad que el sistema experto % esta pensando. Debe tener una respuesta binaria.
 questions([
-  [legendario, '¿Es un pokémon legendario?'],
-  [colorAmarillo,  '¿Es color amarillo?'],
-  [colorVerde,      '¿Es color verde?'],
-  [tipoElectrico,  '¿Es tipo eléctrico?'],
-  [tipoRoca,  '¿Es tipo roca?'],
-  [tieneAlas,   '¿Tiene alas?'],
-  [esRelevanteEnLaMeta, '¿Es relevante en la meta?'],
-  [primerEvolucion,    '¿Es la primer evolución de una familia?'],
-  [generacionUno,  '¿Pertenece a la primera generación?'],
-  [generacionDos,  '¿Pertenece a la segunda generación?']
+  [legendario, 'Â¿Es un pokÃ©mon legendario?'],
+  [colorAmarillo,  'Â¿Es color amarillo?'],
+  [colorVerde,      'Â¿Es color verde?'],
+  [tipoElectrico,  'Â¿Es tipo elÃ©ctrico?'],
+  [tipoRoca,  'Â¿Es tipo roca?'],
+  [tieneAlas,   'Â¿Tiene alas?'],
+  [esRelevanteEnLaMeta, 'Â¿Es relevante en la meta?'],
+  [primerEvolucion,    'Â¿Es la primer evoluciÃ³n de una familia?'],
+  [generacionUno,  'Â¿Pertenece a la primera generaciÃ³n?'],
+  [generacionDos,  'Â¿Pertenece a la segunda generaciÃ³n?']
 ]).

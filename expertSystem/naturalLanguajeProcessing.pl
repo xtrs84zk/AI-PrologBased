@@ -1,7 +1,7 @@
 %%Procesamiento de lenguaje natural, prolog; 
 %%La idea de este código es ser lo más modular posible
 %%
-%Procesando Ûrdenes que involucren crear elementos.
+%Procesando órdenes que involucren crear elementos.
 %Crea el cubo c sobre el piso
 procesar([V,ART1,ADJ,SUJETO,PREPOSICION,ART2,OBJETO]):- member(V,[crea,crear,define,coloca]),
                                                         member(ART1,[el,la]),
@@ -30,7 +30,7 @@ procesar([V,ART1,ADJ,SUJETO,PREPOSICION,ART2,ADJ2,OBJETO]):- member(V,[crea,crea
                                                         assert(tipo_de_objeto(SUJETO,ADJ)),
                                                         assert(sobre(SUJETO,OBJETO)),
                                                         assert(sobre(nada,SUJETO)),
-                                                        write('Se creÛ el '),
+                                                        write('Se creó el '),
                                                         write(ADJ),
                                                         write(' '),
                                                         write(SUJETO),
@@ -47,7 +47,7 @@ procesar([V,ART1,ADJ,SUJETO,PREPOSICION,OBJETO]):- member(V,[crea,crear,define,c
                                                         assert(tipo_de_objeto(SUJETO,ADJ)),
                                                         assert(sobre(SUJETO,OBJETO)),
                                                         assert(sobre(nada,SUJETO)),
-                                                        write('Se creÛ el '),
+                                                        write('Se creó el '),
                                                         write(ADJ),
                                                         write(' '),
                                                         write(SUJETO),
@@ -63,7 +63,7 @@ procesar([V,SUJETO,PREPOSICION,ART,OBJETO]):- member(V,[crea,crear,define,coloca
                                               assert(tipo_de_objeto(SUJETO,cubo)),
                                               assert(sobre(SUJETO,OBJETO)),
                                               assert(sobre(nada,SUJETO)),
-                                              write('Se creÛ el cubo '),
+                                              write('Se creó el cubo '),
                                               write(SUJETO),
                                               write(' sobre '),
                                               writeln(OBJETO).
@@ -76,12 +76,12 @@ procesar([V,SUJETO,PREPOSICION,ART,OBJETO]):- member(V,[crea,crear,define,coloca
                                               assert(sobre(SUJETO,OBJETO)), %se crea el sujeto sobre el objeto
                                               assert(sobre(nada,SUJETO)),
                                               retract(sobre(nada,OBJETO)), %se elimina la cl·usula en que hay nada sobre el objeto
-                                              write('Se creÛ el cubo '),
+                                              write('Se creó el cubo '),
                                               write(SUJETO),
                                               write(' sobre '),
                                               writeln(OBJETO).
                                               
- %Procesando Ûrdenes que involucren quitar elementos.
+ %Procesando órdenes que involucren quitar elementos.
  %retirar a de b
  procesar([V,SUJETO,PREPOSICION,OBJETO]):- member(V,[quitar,quita,remover,retirar,retira]),
                                               member(PREPOSICION,[sobre,encima,arriba,de]),

@@ -4,8 +4,10 @@
 %% Permite predicados dinámicos en la base de conocimiento, asi las características
 %% pueden ser actualizadas al tiempo de ejecucion
 :- dynamic baseDeConocimiento/1.
-:- dynamic bot/0.
 :- dynamic kb/1.
+:- dynamic start/0.
+:- dynamic questions/1.
+
 
 %% Cargar la base de conocimiento y preguntas sobre la misma
 :- consult('kb.pl').

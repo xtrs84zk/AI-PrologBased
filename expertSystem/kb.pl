@@ -184,3 +184,5 @@ kb(esRelevanteEnLaMeta(yes,dragonite)).
 kb(esRelevanteEnLaMeta(no,cloyster)).
 kb(esRelevanteEnLaMeta(yes,zapdos)).
 kb(esRelevanteEnLaMeta(yes,charizard)).
+kb(primerEvolucion(yes,chansey)).
+kb(esRelevanteEnLaMeta(yes,chansey)).
