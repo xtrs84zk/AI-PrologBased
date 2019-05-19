@@ -4,6 +4,7 @@
 %% Permite predicados dinámicos en la base de conocimiento, asi las características
 %% pueden ser actualizadas al tiempo de ejecucion
 :- dynamic baseDeConocimiento/1.
+:- dynamic bot/0.
 :- dynamic kb/1.
 
 %% Cargar la base de conocimiento y preguntas sobre la misma
@@ -11,17 +12,17 @@
 :- consult('preguntas.pl').
 
 %% Escribe una Fact en la base de conocimiento.
-EscribirLineaALaBaseDeConocimiento(HiloDelArchivo, Fact) :-
-  write(HiloDelArchivo, 'kb('),
-  write(HiloDelArchivo, Fact),
-  write(HiloDelArchivo, ').'),
-  write(HiloDelArchivo, '\n').
+writeKBLine(Stream, Fact) :-
+  write(Stream, 'kb('),
+  write(Stream, Fact),
+  write(Stream, ').'),
+  write(Stream, '\n').
 
 %% Escribe todas las Facts en el archivo de la base de conocimiento.
-EscribirALaBaseDeConocimiento :-
-  open('kb.pl', write, HiloDelArchivo),
-  forall(kb(Fact), EscribirLineaALaBaseDeConocimiento(HiloDelArchivo, Fact)),
-  close(HiloDelArchivo).
+writeKB :-
+  open('kb.pl', write, Stream),
+  forall(kb(Fact), writeKBLine(Stream, Fact)),
+  close(Stream).
 
 %% Regresa todas las Facts de la base de conocimiento actual
 listFacts(List) :-
@@ -50,126 +51,126 @@ hasProperties([P|Ps], X) :-
   hasProperties(Ps, X).
 
 %% Recolecta todos los resultados del hazProperty en una lista
-todosLosSImilares(List, Out) :-
+allMatches(List, Out) :-
   findall(X, hasProperties(List, X), Out).
 
 %% Escribe todos las cadenas de la lista a la terminal en orden
-mostrarLinea(LineaAMostrar) :-
+writeLine(Line) :-
   (
-    LineaAMostrar = []    -> true;
-    LineaAMostrar = nl    -> nl;
-    LineaAMostrar = [A|B] -> mostrarLinea(A), mostrarLinea(B);
-    otherwise    -> write(LineaAMostrar)
+    Line = []    -> true;
+    Line = nl    -> nl;
+    Line = [A|B] -> writeLine(A), writeLine(B);
+    otherwise    -> write(Line)
   ).
 
 %% Despliega al usuario una linea para insersion. Normaliza la respuesta para ser en minuscula
-%% de esta forma, no hay problema si escribe "si" o "SI" e, incluso "sI".
-lectura(Entrada) :-
+%% de esta forma, no hay problema si escribe "Yes" o "yes" o, incluso "yEs".
+listen(Input) :-
   write('> '),
   read_line_to_codes(user_input, Codes),
-  atom_codes(RawEntrada, Codes),
-  downcase_atom(RawEntrada, Entrada).
+  atom_codes(RawInput, Codes),
+  downcase_atom(RawInput, Input).
 
 %% Concatena todas las cadenas en la lista en un sólo string de salida
-concat(List, Salida) :-
+concat(List, Output) :-
   (
-    List = []    -> Salida = '';
-    List = [A|B] -> concat(B, Tail), string_concat(A, Tail, Salida)
+    List = []    -> Output = '';
+    List = [A|B] -> concat(B, Tail), string_concat(A, Tail, Output)
   ).
 
 %% En caso de encontrarse con un argumento sin predicción en la base de conocimiento actual,
 %% actualiza la base de conocimiento para contener todas las Facts dadas en la lista
-expandirBaseDeConocimiento([Pred], Actual) :-
+saveFacts([Pred], Actual) :-
   Pred =.. [Name, Val],
-  NuevoPredicado =.. [Name, Val, Actual],
-  assertz(kb(NuevoPredicado)).
+  NewPred =.. [Name, Val, Actual],
+  assertz(kb(NewPred)).
 
-expandirBaseDeConocimiento([H|T], Actual) :-
-  expandirBaseDeConocimiento([H], Actual),
-  expandirBaseDeConocimiento(T, Actual).
+saveFacts([H|T], Actual) :-
+  saveFacts([H], Actual),
+  saveFacts(T, Actual).
 
 %% Intenta adivinar en lo que pensó el usuario
-intentarAdivinar(RespuestaInferida, NumeroDePreguntas, ListaDeActivos) :-
-  mostrarLinea([nl, '¿Estás pensando en  "', RespuestaInferida, '"?', nl]),
-  lectura(Respuesta),
+makeGuess(Guess, QuestionNum, ActiveList) :-
+  writeLine([nl, '¿Estás pensando en  "', Guess, '"?', nl]),
+  listen(Answer),
   (
-    Respuesta = 'si' -> siPierdeElUsuario(NumeroDePreguntas, RespuestaInferida);
-    Respuesta = 'sí' -> siPierdeElUsuario(NumeroDePreguntas, RespuestaInferida);
-    Respuesta = 'no' -> siGanaElUsuario(ListaDeActivos)
+    Answer = 'si' -> onLose(QuestionNum, Guess);
+    Answer = 'sí' -> onLose(QuestionNum, Guess);
+    Answer = 'no' -> onWin(ActiveList)
   ).
 
 %% Si un numero es menor a 1, la salida es reciproca a el, si no, da el mismo numero
-invertirProporción(ProporcionDeEntrada, ProporcionDeSalida) :-
+flipRatio(InRatio, OutRatio) :-
   (
-    ProporcionDeEntrada < 1 -> ProporcionDeSalida is 1 / ProporcionDeEntrada;
-    otherwise -> ProporcionDeSalida is ProporcionDeEntrada
+    InRatio < 1 -> OutRatio is 1 / InRatio;
+    otherwise -> OutRatio is InRatio
   ).
 
 %% Para una propiedad, calcula el radio entre el numero de entidades que  tienen la propiedad y el numero que no
-calcularProporcion(Prop, Proporcion) :-
-  PredicadosVerdaderos =.. [Prop, yes],
-  PredicadosFalsos =.. [Prop, no],
-  findall(X, call(PredicadosVerdaderos, X), Verdaderos),
-  findall(Y, call(PredicadosFalsos, Y), Falsos),
-  length(Verdaderos, NumPos),
-  length(Falsos, NumNeg),
-  ProporcionEnCrudo is NumPos / NumNeg,
-  invertirProporción(ProporcionEnCrudo, Proporcion).
+calcRatio(Prop, Ratio) :-
+  YesPred =.. [Prop, yes],
+  NoPred =.. [Prop, no],
+  findall(X, call(YesPred, X), Positives),
+  findall(Y, call(NoPred, Y), Negatives),
+  length(Positives, NumPos),
+  length(Negatives, NumNeg),
+  RawRatio is NumPos / NumNeg,
+  flipRatio(RawRatio, Ratio).
 
 %% Toma la pregunta de la lista de preguntas que dividen las actuales entidades en dos sets de tamaño similar
-seleccionarPregunta([[Pred, Pregunta]], MenorProporcion, MejorOpcion, NuevaList) :-
-  MejorOpcion = [Pred, Pregunta],
-  NuevaList = [],
-  calcularProporcion(Pred, MenorProporcion).
+pickQuestion([[Pred, Question]], LowestRatio, Best, NewList) :-
+  Best = [Pred, Question],
+  NewList = [],
+  calcRatio(Pred, LowestRatio).
 
-seleccionarPregunta([[Pred, Pregunta]|Tail], MenorProporcion, MejorOpcion, List) :-
-  calcularProporcion(Pred, Proporcion),
-  seleccionarPregunta(Tail, NuevaMenorProporcion, NewMejorOpcion, NuevaList),
+pickQuestion([[Pred, Question]|Tail], LowestRatio, Best, List) :-
+  calcRatio(Pred, Ratio),
+  pickQuestion(Tail, NewLowestRatio, NewBest, NewList),
   (
-    Proporcion < NuevaMenorProporcion ->
-      MenorProporcion = Proporcion,
+    Ratio < NewLowestRatio ->
+      LowestRatio = Ratio,
       List = Tail,
-      MejorOpcion = [Pred, Pregunta];
+      Best = [Pred, Question];
     otherwise ->
-      MenorProporcion = NuevaMenorProporcion,
-      append(NuevaList, [[Pred, Pregunta]], List),
-      MejorOpcion = NewMejorOpcion
+      LowestRatio = NewLowestRatio,
+      append(NewList, [[Pred, Question]], List),
+      Best = NewBest
   ).
 
-seleccionarPregunta(List, MejorOpcion, OutList) :-
-  seleccionarPregunta(List, _, MejorOpcion, OutList).
+pickQuestion(List, Best, OutList) :-
+  pickQuestion(List, _, Best, OutList).
 
-%% Utilidad interna predicate usada por 'acotarBaseDeConocimiento'
-subAct(ListaDePreguntas, ListaDeActivos, NumeroDePreguntas) :-
-  NuevoNumero is NumeroDePreguntas + 1,
-  seleccionarPregunta(ListaDePreguntas, PredicadoDeLaPregunta, NuevaListaDePreguntas),
-  cicloPrincipal(PredicadoDeLaPregunta, NuevaListaDePreguntas, ListaDeActivos, NuevoNumero).
+%% Utilidad interna predicate usada por 'update'
+update1(QuestionList, ActiveList, QuestionNum) :-
+  NewNum is QuestionNum + 1,
+  pickQuestion(QuestionList, PredQuestion, NewQuestionList),
+  botLoop(PredQuestion, NewQuestionList, ActiveList, NewNum).
 
 %% Maneja el caso cuando no hay preguntas restantes
-acotarBaseDeConocimiento(_, _, [], ListaDeActivos, _) :-
-  mostrarLinea(['No se detectaron preguntas.', nl]),
-  siGanaElUsuario(ListaDeActivos).
+update(_, _, [], ActiveList, _) :-
+  writeLine(['No se detectaron preguntas.', nl]),
+  onWin(ActiveList).
 
 %% Actualiza la base de terminos actual, basado en la respuesta dada por el usuario
-acotarBaseDeConocimiento(Respuesta, Pred, ListaDePreguntas, ListaDeActivos, NumeroDePreguntas) :-
-  NuevoPredicado =.. [Pred, Respuesta],
-  append(ListaDeActivos, [NuevoPredicado], NuevaListaDeActivos),
-  todosLosSImilares(NuevaListaDeActivos, Resultados),
-  length(Resultados, CantidadDeResultados),
+update(Answer, Pred, QuestionList, ActiveList, QuestionNum) :-
+  NewPred =.. [Pred, Answer],
+  append(ActiveList, [NewPred], NewActiveList),
+  allMatches(NewActiveList, Results),
+  length(Results, NumResults),
   (
-    CantidadDeResultados = 0 ->
-      siGanaElUsuario(NuevaListaDeActivos);
+    NumResults = 0 ->
+      onWin(NewActiveList);
 
-    CantidadDeResultados = 1 ->
-      [RespuestaInferida] = Resultados,
-      intentarAdivinar(RespuestaInferida, NumeroDePreguntas, NuevaListaDeActivos);
+    NumResults = 1 ->
+      [Guess] = Results,
+      makeGuess(Guess, QuestionNum, NewActiveList);
 
     otherwise ->
-      subAct(ListaDePreguntas, NuevaListaDeActivos, NumeroDePreguntas)
+      update1(QuestionList, NewActiveList, QuestionNum)
   ).
 
-mostrarAyuda :-
-  mostrarLinea([
+showHelp :-
+  writeLine([
     'Prolog n preguntas', nl, nl,
     'sí: Indica al juego que la respuesta es correcta.', nl,
     'no: Indica al juego que la respuesta es incorrecta.', nl,
@@ -179,83 +180,83 @@ mostrarAyuda :-
   ]).
 
 %% Llamado cuando el usuario sale del juego. Muestra un mensaje de despedida
-alSalir :-
-  mostrarLinea(['Hasta luego.', nl]),
+onQuit :-
+  writeLine(['Hasta luego.', nl]),
   true.
 
 %% Llamado cuando el usuario gana el juego. Pregunta al usuario por la cosa en la que estaba pensando
 %%, para guardarlo en la base de conocimiento y usarla para mejorar la ejecucion futura.
-siGanaElUsuario(ListaDeActivos) :-
-  mostrarLinea([nl, '¡Vaya! Me doy, ¿Qué estabas pensando?', nl]),
-  lectura(Actual),
-  mostrarLinea([nl, 'Gracias, conoceré la respuesta para "', Actual, '" la próxima vez.', nl]),
-  expandirBaseDeConocimiento(ListaDeActivos, Actual),
-  EscribirALaBaseDeConocimiento,
+onWin(ActiveList) :-
+  writeLine([nl, '¡Vaya! Me doy, ¿Qué estabas pensando?', nl]),
+  listen(Actual),
+  writeLine([nl, 'Gracias, conoceré la respuesta para "', Actual, '" la próxima vez.', nl]),
+  saveFacts(ActiveList, Actual),
+  writeKB,
   true.
 
 %% Llamado cuando el sistema adivina correctamente
-siPierdeElUsuario(NumeroDePreguntas, RespuestaInferida) :-
-  mostrarLinea([nl, 'Averigüé que estás pensando en "', RespuestaInferida, '" con tan solo ',
-    NumeroDePreguntas, ' preguntas.', nl, '¡Mejor suerte la próxima vez!']),
+onLose(QuestionNum, Guess) :-
+  writeLine([nl, 'Averigüé que estás pensando en "', Guess, '" con tan solo ',
+    QuestionNum, ' preguntas.', nl, '¡Mejor suerte la próxima vez!']),
   true.
 
 %% Llamado cuando el usuario da una respuesta invalida. Muestra el mensaje informandolo de ello
-alRecibirUnaRespuestaInvalida(Response) :-
-  mostrarLinea(['"', Response, '" no es una respuesta válida, por favor inserte "sí", "no" o "quizá".',
+onInvalidResponse(Response) :-
+  writeLine(['"', Response, '" no es una respuesta válida, por favor inserte "sí", "no" o "quizá".',
     nl, 'Para salir del juego, escriba "salir".', nl]).
 
 %% Analiza la linea de entrada para realizar la accion apropiada
-interpretar(Entrada, [Pred, Pregunta], ListaDePreguntas, ListaDeActivos, NumeroDePreguntas) :-
+parse(Input, [Pred, Question], QuestionList, ActiveList, QuestionNum) :-
   (
-    NumeroDePreguntas = 20 -> siGanaElUsuario(ListaDeActivos);
+    QuestionNum = 20 -> onWin(ActiveList);
 
-    Entrada = 'quit' -> alSalir;
-    Entrada = 'stop' -> alSalir;
-    Entrada = 'exit' -> alSalir;
-    Entrada = 'salir' -> alSalir;
+    Input = 'quit' -> onQuit;
+    Input = 'stop' -> onQuit;
+    Input = 'exit' -> onQuit;
+    Input = 'salir' -> onQuit;
 
-    Entrada = 'ayuda' ->
-      mostrarAyuda,
-      cicloPrincipal([Pred, Pregunta], ListaDePreguntas, ListaDeActivos, NumeroDePreguntas);
+    Input = 'ayuda' ->
+      showHelp,
+      botLoop([Pred, Question], QuestionList, ActiveList, QuestionNum);
 
-    Entrada = 'si' ->
-      acotarBaseDeConocimiento(yes, Pred, ListaDePreguntas, ListaDeActivos, NumeroDePreguntas);
-
-    %%Suelo usar tildes, esta línea es por si olvido no ponerla
-    Entrada = 'sí' ->
-      acotarBaseDeConocimiento(yes, Pred, ListaDePreguntas, ListaDeActivos, NumeroDePreguntas);
-
-    Entrada = 'no' ->
-      acotarBaseDeConocimiento(no, Pred, ListaDePreguntas, ListaDeActivos, NumeroDePreguntas);
-
-    Entrada = 'quiza' ->
-      subAct(ListaDePreguntas, ListaDeActivos, NumeroDePreguntas);
+    Input = 'si' ->
+      update(yes, Pred, QuestionList, ActiveList, QuestionNum);
 
     %%Suelo usar tildes, esta línea es por si olvido no ponerla
-    Entrada = 'quizá' ->
-      subAct(ListaDePreguntas, ListaDeActivos, NumeroDePreguntas);
+    Input = 'sí' ->
+      update(yes, Pred, QuestionList, ActiveList, QuestionNum);
+
+    Input = 'no' ->
+      update(no, Pred, QuestionList, ActiveList, QuestionNum);
+
+    Input = 'quiza' ->
+      update1(QuestionList, ActiveList, QuestionNum);
+
+    %%Suelo usar tildes, esta línea es por si olvido no ponerla
+    Input = 'quizá' ->
+      update1(QuestionList, ActiveList, QuestionNum);
 
     otherwise ->
-      alRecibirUnaRespuestaInvalida(Entrada),
-      cicloPrincipal([Pred, Pregunta], ListaDePreguntas, ListaDeActivos, NumeroDePreguntas)
+      onInvalidResponse(Input),
+      botLoop([Pred, Question], QuestionList, ActiveList, QuestionNum)
   ).
 
-%% Itera entre las preguntas
-cicloPrincipal([Pred, Pregunta], ListaDePreguntas, ListaDeActivos, NumeroDePreguntas) :-
+%% Loop principal
+botLoop([Pred, Question], QuestionList, ActiveList, QuestionNum) :-
   nl,
-  mostrarLinea(['Pregunta ', NumeroDePreguntas, ': ', Pregunta, nl]),
-  lectura(Entrada),
-  interpretar(Entrada, [Pred, Pregunta], ListaDePreguntas, ListaDeActivos, NumeroDePreguntas).
+  writeLine(['Pregunta ', QuestionNum, ': ', Question, nl]),
+  listen(Input),
+  parse(Input, [Pred, Question], QuestionList, ActiveList, QuestionNum).
 
 %% Imprime el mensaje de bienvenida
-mensajeDeBienvenida :-
-  mostrarLinea(['Bienvenido!!!:D.', nl,
-    'Intentaré adivinar que personaje de videojuegos estás pensando, pulsa enter para iniciar.', nl]).
+welcomeMessage :-
+  writeLine(['Hola, soy un sistema experto.', nl,
+    'Piensa en algo para que adivine, luego presiona enter.', nl]).
 
 %%comando para iniciar el sistema
-iniciar :-
-  mensajeDeBienvenida,
+start :-
+  welcomeMessage,
   read_line_to_codes(user_input, _),
-  questions(ListaDePreguntas),
-  seleccionarPregunta(ListaDePreguntas, PredicadoDeLaPregunta, NuevaListaDePreguntas),
-  cicloPrincipal(PredicadoDeLaPregunta, NuevaListaDePreguntas, [], 1).
+  questions(QuestionList),
+  pickQuestion(QuestionList, PredQuestion, NewQuestionList),
+  botLoop(PredQuestion, NewQuestionList, [], 1).
