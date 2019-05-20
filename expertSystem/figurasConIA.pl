@@ -25,21 +25,34 @@ lectura:- write('> '),
 		  
 %%Holy smokes, what else shall I do
 %%guess i'll remove modules
-escribirLinea(Linea):- (
-      Linea = []    -> true;
-      Linea = nl    -> nl;
-      Linea = [A|B] -> writeLine(A), escribirLinea(B);
-      otherwise    -> write(Linea)
+escribirLinea(Line):- (
+      Line = []    -> true;
+      Line = nl    -> nl;
+      Line = [A|B] -> escribirLinea(A), escribirLinea(B);
+      otherwise    -> write(Line)
     ).
 
 
-%%Procesamiento de lenguaje natural, prolog; 
-%%La idea de este código es ser lo más modular posible
-%Procesando órdenes que involucren crear elementos.
+%%los cubos se crearán en varios métodos debajo, redirijir aquí
+%%Cubo que va sobre el piso -posibilidad 1 : por defecto
+crearCubo(NuevoCubo):- not(sobre(CuboDebajo,_)),
+					   assert(sobre(NuevoCubo,piso)),
+					   assert(sobre(nada,NuevoCubo)),
+					   escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el piso.'],nl).
+					   
+%%Cubo que va sobre el piso -posibilidad 2 : se especificó crearle sobre el piso
+crearCubo(NuevoCubo,CuboDebajo):- member(CuboDebajo,[piso,suelo,firme]),
+								  crearCubo(NuevoCubo).
+								  
 crearCubo(NuevoCubo,CuboDebajo):- sobre(CuboDebajo,_),
 								  sobre(nada,CuboDebajo),
 								  assert(sobre(NuevoCubo,CuboDebajo)),
+								  asser(sobre(nada,NuevoCubo)),
 								  escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el cubo ',CuboDebajo,'.']).
+								  
+%%Procesamiento de lenguaje natural, prolog; 
+%%La idea de este código es ser lo más modular posible
+%Procesando órdenes que involucren crear elementos.
 
 %%Crea el cubo c sobre el piso
 procesar([V,ART1,ADJ,SUJETO,PREPOSICION,ART2,OBJETO]):- member(V,[crea,crear,define,coloca]),
