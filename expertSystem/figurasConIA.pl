@@ -53,13 +53,19 @@ escribirLinea(Line):- (
 
 %%las figuras se crearán en los métodos siguientes
 %%la información suficiente se está otorgando
-crear(TipoDeFigura,FiguraNueva,Como,RespectoA):- not(sobre(FiguraNueva,_)),
+crear(TipoDeFigura,Size,FiguraNueva,Como,RespectoA):- not(sobre(FiguraNueva,_)),
 									not(dentro(FiguraNueva,_)),
 									member(Como,[sobre,encima,arriba]),
+									member(Size,[chico,mediano,grande,chica,mediana]),
 									(
-									TipoDeFigura = cubo -> crearCubo(FiguraNueva,RespectoA);
+									TipoDeFigura = cubo -> crearCubo(FiguraNueva,RespectoA,Size);
 									otherwise -> escribirLinea('Tipo no permitido.')
 									).
+									
+crear(TipoDeFigura,Size,FiguraNueva,Como,RespectoA):-member(Como,[dentro,adentro]),
+													 not(dentro(FiguraNueva,_)),
+													 not(sobre())
+													 
 									
 %%no se está otorgando suficiente información, se procede a inferir
 %%por motivos personales, será un cubo
@@ -68,17 +74,16 @@ crear(FiguraNueva):- crearCubo(FiguraNueva).
 %%los cubos se crearán en varios métodos debajo, redirijir aquí
 %%Cubo que va sobre el piso -posibilidad 1 : por defecto
 crearCubo(NuevoCubo):- not(sobre(CuboDebajo,_)),
-					   assert(tipoDeFigura(NuevoCubo,cubo)),
-					   assert(sobre(NuevoCubo,piso)),
-					   assert(sobre(nada,NuevoCubo)),
+					   %%wait
 					   escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el piso.'],nl).
 					   
 %%Cubo que va sobre el piso -posibilidad 2 : se especificó crearle sobre el piso
-crearCubo(NuevoCubo,CuboDebajo):- member(CuboDebajo,[piso,suelo,firme]),
-								  crearCubo(NuevoCubo).
+crearCubo(NuevoCubo,CuboDebajo,Size):- member(CuboDebajo,[piso,suelo,firme]).
 								  
-crearCubo(NuevoCubo,CuboDebajo):- sobre(CuboDebajo,_),
+crearCubo(NuevoCubo,CuboDebajo,Size):- sobre(CuboDebajo,_),
 								  sobre(nada,CuboDebajo),
+								  assert(tipo_de_objeto(cubo,))
+								  assert(shapeSize(NuevoCubo,Size)),
 								  assert(sobre(NuevoCubo,CuboDebajo)),
 								  asser(sobre(nada,NuevoCubo)),
 								  escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el cubo ',CuboDebajo,'.']).
