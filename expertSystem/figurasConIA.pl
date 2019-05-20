@@ -12,6 +12,29 @@
 %%Accediendo al complemento para procesar el lenguaje natural.
 %%consult('naturalLanguajeProcessing.pl').
 
+%%Accesando al archivo donde se describe el escenario
+%%Fragmento adaptado de http://cs.union.edu/~striegnk/learn-prolog-now/html/node106.html
+
+%%acceso para correr pruebas más rápido, recordatorio para eliminar esta línea después
+a:- leyendoElArchivo.
+
+leyendoElArchivo:- open('escenario.txt',read,InStream),
+					readWord(InStream,W),
+					%%downcase_atom(W,X),
+					procesar(W).
+					
+readWord(InStream,W) :-
+        get0(InStream,Char),
+        checkCharAndReadRest(Char,Chars,InStream),
+        atom_chars(W,Chars).
+ 
+checkCharAndReadRest(10,[],_) :- !.  % Return
+checkCharAndReadRest(-1,[],_) :- !.  % End of Stream
+checkCharAndReadRest(end_of_file,[],_) :- !.
+checkCharAndReadRest(Char,[Char|Chars],InStream) :-
+        get0(InStream,NextChar),
+        checkCharAndReadRest(NextChar,Chars,InStream).
+
 %%Cargando las reglas a la base de conocimiento, i guess
 %%consult('rules.pl').
 
@@ -55,6 +78,7 @@ crearCubo(NuevoCubo,CuboDebajo):- sobre(CuboDebajo,_),
 %Procesando órdenes que involucren crear elementos.
 
 %%Crea el cubo c sobre el piso
+					
 procesar([V,ART1,ADJ,SUJETO,PREPOSICION,ART2,OBJETO]):- member(V,[crea,crear,define,coloca]),
                                                         member(ART1,[el,la]),
                                                         member(ADJ,[cubo,piramide,cilindro,caja,esfera]),
@@ -81,6 +105,14 @@ procesar([V,ART1,ADJ,SUJETO,PREPOSICION,OBJETO]):-member(V,[existe,hay,veo]),
 													   %%crear el cubo b sobre a
 
 %crea el cubo a sobre el cubo b
+
+%%Existe un cubo llamado c
+procesar([V,ART1,ADJ,LLAMADO,SUJETO]):- member(V,[existe,hay,veo]),
+										member(ART1,[un,una]),
+										member(ADJ,[cubo,piramide,cilindro,caja,esfera]),
+										not(sobre(SUJETO,_)),
+										crearCubo(SUJETO).
+										
 procesar([V,ART1,ADJ,SUJETO,PREPOSICION,ART2,ADJ2,OBJETO]):- member(V,[crea,crear,define,coloca]),
                                                         member(ART1,[el,la]),
                                                         member(ADJ,[cubo,piramide,cilindro,caja,esfera]),
@@ -182,6 +214,8 @@ procesar([V,CANT,PREPOSICION,X]):- member(V,[coloca,colocar,pon]),
                                         member(CANT,[todos,todo]),
                                         member(PREPOSICION,[sobre, en]),
                                         apilar(X).
+										
+procesar(X):- escribirLinea([nl,'por alguna razón, falló al procesar, la línea era: "',X,'"']).
 										
 %%qué ocurre si el campo está vacío
 procesar([]):- writeln('El campo está vacío.'), true.
