@@ -18,6 +18,20 @@
 %%acceso para correr pruebas más rápido, recordatorio para eliminar esta línea después
 a:- leyendoElArchivo.
 
+b:-
+    open('escenario.txt', read, Str),
+    read_file(Str,Lines),
+    close(Str),
+    procesar(Lines), nl.
+
+read_file(Stream,[]) :-
+    at_end_of_stream(Stream).
+
+read_file(Stream,[X|L]) :-
+    \+ at_end_of_stream(Stream),
+    read(Stream,X),
+    read_file(Stream,L).
+
 leyendoElArchivo:- open('escenario.txt',read,InStream),
 					readWord(InStream,W),
 					%%downcase_atom(W,X),
@@ -214,6 +228,10 @@ procesar([V,CANT,PREPOSICION,X]):- member(V,[coloca,colocar,pon]),
                                         member(CANT,[todos,todo]),
                                         member(PREPOSICION,[sobre, en]),
                                         apilar(X).
+										
+%%si no coincide con alguna de las anteriores, se asume que es una lista de predicados.
+%%esto es meramente experimental, proceder con precaución										
+procesar([X|R]):- procesar(X),procesar(R).
 										
 procesar(X):- escribirLinea([nl,'por alguna razón, falló al procesar, la línea era: "',X,'"']).
 										
