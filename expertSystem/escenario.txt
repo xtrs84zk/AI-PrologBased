@@ -1,0 +1,4 @@
+'crea el cubo a sobre el piso'.
+'existe un cubo llamado c'.
+'existe un cubo llamado a sobre el piso'.
+'existe un cubo llamado b sobre a'.
