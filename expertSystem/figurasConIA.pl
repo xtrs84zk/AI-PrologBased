@@ -16,9 +16,9 @@
 %%Fragmento adaptado de http://cs.union.edu/~striegnk/learn-prolog-now/html/node106.html
 
 %%acceso para correr pruebas más rápido, recordatorio para eliminar esta línea después
-a:- leyendoElArchivo.
+a:- leyendoElArchivoDelEscenario.
 
-b:-
+leyendoElArchivoDelEscenario:-
     open('escenario.txt', read, Str),
     read_file(Str,Lines),
     close(Str),
@@ -32,23 +32,6 @@ read_file(Stream,[X|L]) :-
     read(Stream,X),
     read_file(Stream,L).
 
-leyendoElArchivo:- open('escenario.txt',read,InStream),
-					readWord(InStream,W),
-					%%downcase_atom(W,X),
-					procesar(W).
-					
-readWord(InStream,W) :-
-        get0(InStream,Char),
-        checkCharAndReadRest(Char,Chars,InStream),
-        atom_chars(W,Chars).
- 
-checkCharAndReadRest(10,[],_) :- !.  % Return
-checkCharAndReadRest(-1,[],_) :- !.  % End of Stream
-checkCharAndReadRest(end_of_file,[],_) :- !.
-checkCharAndReadRest(Char,[Char|Chars],InStream) :-
-        get0(InStream,NextChar),
-        checkCharAndReadRest(NextChar,Chars,InStream).
-
 %%Cargando las reglas a la base de conocimiento, i guess
 %%consult('rules.pl').
 
@@ -60,7 +43,6 @@ lectura:- write('> '),
           readln(LINEA),
           procesar(LINEA).
 		  
-%%Holy smokes, what else shall I do
 %%guess i'll remove modules
 escribirLinea(Line):- (
       Line = []    -> true;
@@ -69,10 +51,24 @@ escribirLinea(Line):- (
       otherwise    -> write(Line)
     ).
 
-
+%%las figuras se crearán en los métodos siguientes
+%%la información suficiente se está otorgando
+crear(TipoDeFigura,FiguraNueva,Como,RespectoA):- not(sobre(FiguraNueva,_)),
+									not(dentro(FiguraNueva,_)),
+									member(Como,[sobre,encima,arriba]),
+									(
+									TipoDeFigura = cubo -> crearCubo(FiguraNueva,RespectoA);
+									otherwise -> escribirLinea('Tipo no permitido.')
+									).
+									
+%%no se está otorgando suficiente información, se procede a inferir
+%%por motivos personales, será un cubo
+crear(FiguraNueva):- crearCubo(FiguraNueva).									
+									
 %%los cubos se crearán en varios métodos debajo, redirijir aquí
 %%Cubo que va sobre el piso -posibilidad 1 : por defecto
 crearCubo(NuevoCubo):- not(sobre(CuboDebajo,_)),
+					   assert(tipoDeFigura(NuevoCubo,cubo)),
 					   assert(sobre(NuevoCubo,piso)),
 					   assert(sobre(nada,NuevoCubo)),
 					   escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el piso.'],nl).
