@@ -82,20 +82,67 @@ public class ProcesarReglas {
 
     private static String procesarEscena(String escena) {
         String[] escenaPorPalabras = escena.split(" ");
+        int tipo = -1,  tamaño = -1;
+        String tamañoReal = "";
+        String tipoReal = "";
+        String colorReal = "";
         int cantidadDePalabrasEnLaEscenaDescrita = escenaPorPalabras.length;
         switch (cantidadDePalabrasEnLaEscenaDescrita) {
             case 8:
                 //existe un cubo azul grande sobre el piso
                 if (escenaPorPalabras[0].equals("existe") && escenaPorPalabras[1].equals("un")
-                        && esUnaFiguraValida(escenaPorPalabras[2])
-                        && esUnTamañoValido(escenaPorPalabras[4])
                         && escenaPorPalabras[5].equals("sobre") && escenaPorPalabras[6].equals("el")
                         && escenaPorPalabras[7].equals("piso")) {
-                    return crearFigura(escenaPorPalabras[2], escenaPorPalabras[4], escenaPorPalabras[3], "");
+                    //se busca la sintaxis en que escribió los atributos
+                    if(esUnaFiguraValida(escenaPorPalabras[2])){
+                        tipoReal = escenaPorPalabras[2];
+                        tipo = 2;
+                    }else if(esUnaFiguraValida(escenaPorPalabras[4])){
+                        tipoReal = escenaPorPalabras[4];
+                        tipo = 4;
+                    }else if(esUnaFiguraValida(escenaPorPalabras[3])){
+                        tipo = 3;
+                        tipoReal = escenaPorPalabras[tipo];
+                    }
+                    if(esUnTamañoValido(escenaPorPalabras[4])){
+                        tamañoReal = normalizarTamaño(escenaPorPalabras[4]);
+                        tamaño = 4;
+                    } else if(esUnTamañoValido(escenaPorPalabras[2])){
+                        tamañoReal = normalizarTamaño(escenaPorPalabras[2]);
+                        tamaño = 2;
+                    } else if(esUnTamañoValido(escenaPorPalabras[3])){
+                        tamaño = 3;
+                        tamañoReal = normalizarTamaño(escenaPorPalabras[tamaño]);
+                    }
+                    //el color se define como el tercer enunciado no encontrado
+                    if((tipo == 4 && tamaño == 2) || tipo == 2 && tamaño == 4){
+                        colorReal = escenaPorPalabras[3];
+                    } else if((tipo == 4 && tamaño == 3) || (tamaño == 4 && tipo == 3)){
+                        colorReal = escenaPorPalabras[2];
+                    } else if(tipo == -1){
+                        switch (tamaño){
+                            case -1:colorReal = escenaPorPalabras[3];
+                            break;
+                        }
+                    }
+                    // 2 : tipo de gifura ; 4 : tamaño de la figura ; 3 : color de la figura ;
+                    return crearFigura(tipoReal, tamañoReal, colorReal, "");
                 }
                 break;
+
         }
         return escena;
+    }
+
+    private static String normalizarTamaño(String tamaño){
+        switch (tamaño.charAt(0)){
+            case 'c': return "chico";
+            case 'g': return  "grande";
+            case  'm': return "mediano";
+        }
+        //no debería haber errores en este punto, but, what gives
+        //tamaño mediano por defecto
+        return "mediano";
     }
 
     private static boolean esUnaFiguraValida(String figura) {
