@@ -9,15 +9,14 @@ public class Main {
     public static void main(String[] args) {
         String rutaAGuardarElArchivo = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/escenario.pl";
         //cargando el codigo desde un archivo de texto
-        ArrayList codigo = null;
-        codigoAlArchivoPl = new ArrayList<String>();
+        ArrayList codigo;
+        codigoAlArchivoPl = new ArrayList<>();
         try {
             codigo = cargarUnArchivoDeTexto();
-            System.out.println("" + codigo.size() + codigo.get(0));
+            procesarReglasDesdeLenguajeNatural(codigo);
         } catch (Exception e) {
             System.err.println("Error al encontrar el archivo.");
         }
-        procesarReglasDesdeLenguajeNatural(codigo);
         try {
             escribirElResultadoAUnArchivo(codigoAlArchivoPl, rutaAGuardarElArchivo);
         } catch (Exception f) {
@@ -28,15 +27,15 @@ public class Main {
     /**
      * Procesando reglas del lenguaje natural
      *
-     * @param lineasDelLenguajeNaturalAProcesar
-     * @return
+     * @param lineasDelLenguajeNaturalAProcesar que son las líneas a procesar de lenguaje natural
+     * @return null
      */
     private static void procesarReglasDesdeLenguajeNatural(ArrayList<String> lineasDelLenguajeNaturalAProcesar) {
         if (lineasDelLenguajeNaturalAProcesar.get(0).equals("si")) {
             String reglaProcesada = "";
             why:
             for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
-                while (i < lineasDelLenguajeNaturalAProcesar.size() && !lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces")) {
+                while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces")) {
                     //procesarRegla
                     //agregar la regla procesada a un .pl
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
@@ -70,13 +69,11 @@ public class Main {
                 codigoAlArchivoPl.add("true.");
             }
         }
-        return;
     }
 
     private static String procesarRegla(String regla) {
-        String X = "X";
-        String Y = "Y";
-        int i = 0;
+        String X;
+        String Y;
         String[] regl = regla.split(" ");
         if (regl.length < 1 || regla.equals("\\s")) {
             return "";
@@ -157,16 +154,6 @@ public class Main {
         return null;
     }
 
-    private static boolean contains(String[] dondeBuscar, String queBuscar) {
-        boolean flag = false;
-        for (int i = 0; i < dondeBuscar.length; i++) {
-            if (dondeBuscar[i].equals(queBuscar)) {
-                flag = true;
-            }
-        }
-        return flag;
-    }
-
     private static String procesarLinea(String linea) {
         //asegurándome de que no haya espacios antes de la primer palabra o después de la última
         //linea = eliminarEspaciosAlInicioYFinal(linea);
@@ -180,9 +167,9 @@ public class Main {
         why:
         for (int i = 0; i < linea.length(); i++) {
             //Eliminando espacios al final
-            while (i < linea.length() && linea.charAt(i) == ' ') {
+            if (linea.charAt(i) == ' ') {
                 cantidadDeEspacios++;
-                continue why;
+                continue;
             }
             //si la String de salida está vacía, se han eliminado los espacios del inicio
             //en caso contrario, se ignoran todos los posibles espacios entre palabras y sólo se inserta uno
