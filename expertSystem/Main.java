@@ -32,24 +32,25 @@ public class Main {
      */
     private static void procesarReglasDesdeLenguajeNatural(ArrayList<String> lineasDelLenguajeNaturalAProcesar) {
         if (lineasDelLenguajeNaturalAProcesar.get(0).equals("si")) {
-            System.err.println("Se procesó el primer sí.");
             String reglaProcesada = "";
             why:
             for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
-                System.out.println(reglaProcesada);
                 while (i < lineasDelLenguajeNaturalAProcesar.size() && !lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces")) {
                     //procesarRegla
                     //System.err.println(i);
                     //agregar la regla procesada a un .pl
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
+                        if (reglaProcesada.equals("")) {
+                            continue why;
+                        }
                         if (reglaProcesada.charAt(reglaProcesada.length() - 1) != '-') {
                             reglaProcesada += ",";
                         }
                         codigoAlArchivoPl.add(reglaProcesada);
                         continue why;
                     } else {
-                        codigoAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + ".");
+                        codigoAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + "').");
                         continue why;
                     }
                 }
@@ -58,6 +59,9 @@ public class Main {
                     //procesarEntonces
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
+                        if (reglaProcesada.equals("")) {
+                            continue why;
+                        }
                         codigoAlArchivoPl.add(reglaProcesada + ",");
                     }
                     continue why;
@@ -75,6 +79,9 @@ public class Main {
         String Y = "Y";
         int i = 0;
         String[] regl = regla.split(" ");
+        if (regl.length < 1) {
+            return "";
+        }
             if (regl[0].equals("la")) {
                 if (regl[1].equals("orden")) {
                     if (regl[2].equals("es")) {
@@ -163,7 +170,7 @@ public class Main {
 
     private static String procesarLinea(String linea) {
         //asegurándome de que no haya espacios antes de la primer palabra o después de la última
-        linea = eliminarEspaciosAlInicioYFinal(linea);
+        //linea = eliminarEspaciosAlInicioYFinal(linea);
         //linea = "'" + linea + "'.";
         return linea;
     }
