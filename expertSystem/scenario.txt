@@ -1,0 +1,6 @@
+existe un cubo azul grande sobre el piso
+arriba del cubo azul grande se encuentra el cubo rojo mediano
+arriba del cubo rojo mediana esta una caja chica amarilla cerrada
+arriba de la caja chica amarilla no existen objetos
+existe un cilindro amarillo grande sobre el piso
+arriba del cilindro amarillo grande no existen objetos

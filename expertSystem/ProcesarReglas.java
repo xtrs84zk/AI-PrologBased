@@ -1,27 +1,33 @@
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class ProcesarReglas {
     private static ArrayList<String> codigoAlArchivoPl;
+    private static ArrayList<String> codigoDelEscenario;
+    private static int cantidadDeCubosAnonimos = 0;
 
     public static void main(String[] args) {
-        String rutaAGuardarElArchivo = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.pl";
+        String rutaAGuardarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.pl";
+        String rutaParaCargarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.txt";
         //cargando el codigo desde un archivo de texto
         ArrayList codigo;
         codigoAlArchivoPl = new ArrayList<>();
         try {
-            codigo = cargarUnArchivoDeTexto();
+            //Cargando el archivo de reglas
+            codigo = cargarUnArchivoDeTexto(rutaParaCargarElArchivoDeReglas);
             procesarReglasDesdeLenguajeNatural(codigo);
         } catch (Exception e) {
             System.err.println("Error al encontrar el archivo.");
+            return;
         }
+        //guardando el archivo de reglas procesado a un .pl
         try {
-            escribirElResultadoAUnArchivo(codigoAlArchivoPl, rutaAGuardarElArchivo);
+            escribirElResultadoAUnArchivo(codigoAlArchivoPl, rutaAGuardarElArchivoDeReglas);
         } catch (Exception f) {
             f.printStackTrace();
         }
+        //guardando el escenario procesado a un .pl
     }
 
     /**
@@ -72,6 +78,59 @@ public class ProcesarReglas {
         }
         codigoAlArchivoPl.add("true. \n");
         //}
+    }
+
+    private static String procesarEscena(String escena) {
+        String[] escenaPorPalabras = escena.split(" ");
+        int cantidadDePalabrasEnLaEscenaDescrita = escenaPorPalabras.length;
+        switch (cantidadDePalabrasEnLaEscenaDescrita) {
+            case 8:
+                //existe un cubo azul grande sobre el piso
+                if (escenaPorPalabras[0].equals("existe") && escenaPorPalabras[1].equals("un")
+                        && esUnaFiguraValida(escenaPorPalabras[2])
+                        && esUnTamañoValido(escenaPorPalabras[4])
+                        && escenaPorPalabras[5].equals("sobre") && escenaPorPalabras[6].equals("el")
+                        && escenaPorPalabras[7].equals("piso")) {
+                    return crearFigura(escenaPorPalabras[2], escenaPorPalabras[4], escenaPorPalabras[3], "");
+                }
+                break;
+        }
+        return escena;
+    }
+
+    private static boolean esUnaFiguraValida(String figura) {
+        if (figura.equals("cubo")) {
+            return true;
+        } else if (figura.equals("caja")) {
+            return true;
+        } else return figura.equals("cilindro");
+    }
+
+    private static boolean esUnTamañoValido(String tamaño) {
+        if (tamaño.equals("grande") || tamaño.equals("chico") || tamaño.equals("mediano")) {
+            return true;
+        }
+        return tamaño.equals("chica") || tamaño.equals("mediana");
+    }
+
+
+    private static String crearFigura(String tipo, String tamaño, String color, String X) {
+        if (tipo.equals("")) {
+            tipo = "cubo";
+        }
+        if (tamaño.equals("")) {
+            tamaño.equals("chico");
+        }
+        if (color.equals("")) {
+            color = ("azul");
+        }
+        if (X.equals("")) {
+            X = tipo + tamaño + color + cantidadDeCubosAnonimos;
+        }
+        return "tamaño(" + X.toUpperCase() + "," + "). \n" +
+                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
+                "color(" + X.toUpperCase() + "," + color + "). \n" +
+                "sobre(" + X.toUpperCase() + ",piso). \n";
     }
 
     private static String procesarRegla(String regla) {
@@ -220,9 +279,9 @@ public class ProcesarReglas {
      * @return ArrayList con el contenido del archivo
      * @throws IOException en caso de no poder acceder o leer el mismo.
      */
-    private static ArrayList cargarUnArchivoDeTexto() throws IOException {
+    private static ArrayList cargarUnArchivoDeTexto(String path) throws IOException {
         ArrayList<String> archivoDeTextoPorLineas;
-        File archivoDelCodigo = new File("/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.txt");
+        File archivoDelCodigo = new File(path);
         InputStreamReader input;
         input = new InputStreamReader(new FileInputStream(archivoDelCodigo), StandardCharsets.UTF_8);
         archivoDeTextoPorLineas = new ArrayList<>();
