@@ -1,5 +1,6 @@
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class Main {
@@ -11,7 +12,7 @@ public class Main {
         ArrayList codigo = null;
         codigoAlArchivoPl = new ArrayList<String>();
         try {
-            codigo = cargarCodigoDesdeUnArchivoDeTexto();
+            codigo = cargarUnArchivoDeTexto();
             System.out.println("" + codigo.size() + codigo.get(0));
         } catch (Exception e) {
             System.err.println("Error al encontrar el archivo.");
@@ -37,7 +38,6 @@ public class Main {
             for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
                 while (i < lineasDelLenguajeNaturalAProcesar.size() && !lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces")) {
                     //procesarRegla
-                    //System.err.println(i);
                     //agregar la regla procesada a un .pl
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
@@ -74,12 +74,11 @@ public class Main {
     }
 
     private static String procesarRegla(String regla) {
-        System.err.println(regla);
         String X = "X";
         String Y = "Y";
         int i = 0;
         String[] regl = regla.split(" ");
-        if (regl.length < 1) {
+        if (regl.length < 1 || regla.equals("\\s")) {
             return "";
         }
             if (regl[0].equals("la")) {
@@ -207,33 +206,33 @@ public class Main {
      * @return ArrayList con el contenido del archivo
      * @throws IOException en caso de no poder acceder o leer el mismo.
      */
-    private static ArrayList cargarCodigoDesdeUnArchivoDeTexto() throws IOException {
-        ArrayList<String> codigoPorLineas;
+    private static ArrayList cargarUnArchivoDeTexto() throws IOException {
+        ArrayList<String> archivoDeTextoPorLineas;
         File archivoDelCodigo = new File("/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/escenario.txt");
         InputStreamReader input;
-        input = new InputStreamReader(new FileInputStream(archivoDelCodigo), "UTF8");
-        codigoPorLineas = new ArrayList<>();
+        input = new InputStreamReader(new FileInputStream(archivoDelCodigo), StandardCharsets.UTF_8);
+        archivoDeTextoPorLineas = new ArrayList<>();
         String r;
         BufferedReader in = new BufferedReader(input);
-        //el código será leído en minúsculas
+        //el texto será leído en minúsculas
         while ((r = in.readLine()) != null) {
-            codigoPorLineas.add(procesarLinea(r.toLowerCase()));
+            archivoDeTextoPorLineas.add(procesarLinea(r.toLowerCase()));
         }
         in.close();
-        return codigoPorLineas;
+        return archivoDeTextoPorLineas;
     }
 
     /**
      * Recibe como parámetro un ArrayList y lo escribe a un archivo.
      *
-     * @param analisisLexico que contiene la información a escribir.
+     * @param listaAEscribir que contiene la información a escribir.
      * @throws IOException en caso de no poder escribir al archivo.
      */
-    private static void escribirElResultadoAUnArchivo(ArrayList<String> analisisLexico, String rutaDelArchivo) throws IOException {
+    private static void escribirElResultadoAUnArchivo(ArrayList<String> listaAEscribir, String rutaDelArchivo) throws IOException {
         FileWriter writer = new FileWriter(rutaDelArchivo);
-        for (String anAnalisisLexico : analisisLexico) {
-            if (anAnalisisLexico != null) {
-                writer.write(anAnalisisLexico + "\n");
+        for (String aListaAEscribir : listaAEscribir) {
+            if (aListaAEscribir != null) {
+                writer.write(aListaAEscribir + "\n");
             }
         }
         writer.close();
