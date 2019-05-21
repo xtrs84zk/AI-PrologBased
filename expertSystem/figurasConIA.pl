@@ -19,7 +19,7 @@
 a:- leyendoElArchivoDelEscenario.
 
 leyendoElArchivoDelEscenario:-
-    open('escenario.txt', read, Str),
+    open('escenario.pl', read, Str),
     read_file(Str,Lines),
     close(Str),
     procesar(Lines), nl.
