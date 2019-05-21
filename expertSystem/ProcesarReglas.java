@@ -48,6 +48,12 @@ public class ProcesarReglas {
                     }
                     i++;
                 }
+                //exportando el archivo del escenario
+                try {
+                    escribirElResultadoAUnArchivo(codigoDeEscenarioAlArchivoPl, rutaParaGuardarElEscenario);
+                } catch (Exception k) {
+                    System.err.println("Hubo un error al guardar el archivo de escenario.");
+                }
             } catch (Exception p) {
                 p.printStackTrace();
             }
@@ -203,7 +209,7 @@ public class ProcesarReglas {
             color = ("azul");
         }
         if (X.equals("")) {
-            X = tipo + tamaño + color + cantidadDeCubosAnonimos;
+            X = tipo + tamaño + color + ++cantidadDeCubosAnonimos;
         }
         return "tamaño(" + X.toUpperCase() + "," + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
