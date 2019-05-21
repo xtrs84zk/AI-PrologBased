@@ -3,7 +3,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
-public class Main {
+public class ProcesarReglas {
     private static ArrayList<String> codigoAlArchivoPl;
 
     public static void main(String[] args) {
