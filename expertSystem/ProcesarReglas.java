@@ -3,29 +3,56 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class ProcesarReglas {
-    private static ArrayList<String> codigoAlArchivoPl;
+    private static ArrayList<String> codigoDeReglasAlArchivoPl, codigoDeEscenarioAlArchivoPl;
     private static ArrayList<String> codigoDelEscenario;
     private static int cantidadDeCubosAnonimos = 0;
 
     public static void main(String[] args) {
         String rutaAGuardarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.pl";
         String rutaParaCargarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.txt";
-        //cargando el codigo desde un archivo de texto
-        ArrayList codigo;
-        codigoAlArchivoPl = new ArrayList<>();
+        String rutaParaCargarElEscenario = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/scenario.txt";
+        String rutaParaGuardarElEscenario = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/scenario.pl";
+        //cargando las reglas y el escenario EnCrudo desde un archivo de texto
+        ArrayList reglasEnCrudo;
+        ArrayList<String> escenarioEnCrudo = new ArrayList<String>();
+        codigoDeReglasAlArchivoPl = new ArrayList<>();
+        codigoDeEscenarioAlArchivoPl = new ArrayList<>();
         try {
             //Cargando el archivo de reglas
-            codigo = cargarUnArchivoDeTexto(rutaParaCargarElArchivoDeReglas);
-            procesarReglasDesdeLenguajeNatural(codigo);
+            reglasEnCrudo = cargarUnArchivoDeTexto(rutaParaCargarElArchivoDeReglas);
+            procesarReglasDesdeLenguajeNatural(reglasEnCrudo);
         } catch (Exception e) {
-            System.err.println("Error al encontrar el archivo.");
+            System.err.println("No se pudo cargar el archivo de reglas.");
             return;
         }
         //guardando el archivo de reglas procesado a un .pl
         try {
-            escribirElResultadoAUnArchivo(codigoAlArchivoPl, rutaAGuardarElArchivoDeReglas);
+            escribirElResultadoAUnArchivo(codigoDeReglasAlArchivoPl, rutaAGuardarElArchivoDeReglas);
         } catch (Exception f) {
             f.printStackTrace();
+        }
+
+        //cargando el archivo con el escenario
+        try {
+            escenarioEnCrudo = cargarUnArchivoDeTexto(rutaParaCargarElEscenario);
+            int i = 0;
+            String tmp;
+            try {
+                //procesando las reglas del escenario
+                while (i < escenarioEnCrudo.size()) {
+                    tmp = procesarEscena(escenarioEnCrudo.get(i));
+                    if (!tmp.equals("")) {
+                        codigoDeEscenarioAlArchivoPl.add(tmp);
+                    } else {
+                        codigoDeEscenarioAlArchivoPl.add("write('Error al definir escenario, linea: " + i + ".");
+                    }
+                    i++;
+                }
+            } catch (Exception p) {
+                p.printStackTrace();
+            }
+        } catch (Exception e) {
+            System.err.println("No se pudo cargar el archivo de escenario.");
         }
         //guardando el escenario procesado a un .pl
     }
@@ -53,10 +80,10 @@ public class ProcesarReglas {
                         if (reglaProcesada.charAt(reglaProcesada.length() - 1) != '-') {
                             reglaProcesada += ",";
                         }
-                        codigoAlArchivoPl.add(reglaProcesada);
+                        codigoDeReglasAlArchivoPl.add(reglaProcesada);
                         continue why;
                     } else {
-                        codigoAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + "'),");
+                        codigoDeReglasAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + "'),");
                         continue why;
                     }
                 }
@@ -66,23 +93,23 @@ public class ProcesarReglas {
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
                         if (!reglaProcesada.equals("")) {
-                            codigoAlArchivoPl.add(reglaProcesada + ",");
+                            codigoDeReglasAlArchivoPl.add(reglaProcesada + ",");
                         }
                     }
                     continue why;
                 }
                 //se cierra el bloque de código prolog
-                codigoAlArchivoPl.add("true. \n");
+                codigoDeReglasAlArchivoPl.add("true. \n");
             }
-            codigoAlArchivoPl.add("true. \n");
+            codigoDeReglasAlArchivoPl.add("true. \n");
         }
-        codigoAlArchivoPl.add("true. \n");
+        codigoDeReglasAlArchivoPl.add("true. \n");
         //}
     }
 
     private static String procesarEscena(String escena) {
         String[] escenaPorPalabras = escena.split(" ");
-        int tipo = -1,  tamaño = -1;
+        int tipo = -1, tamaño = -1;
         String tamañoReal = "";
         String tipoReal = "";
         String colorReal = "";
@@ -94,35 +121,36 @@ public class ProcesarReglas {
                         && escenaPorPalabras[5].equals("sobre") && escenaPorPalabras[6].equals("el")
                         && escenaPorPalabras[7].equals("piso")) {
                     //se busca la sintaxis en que escribió los atributos
-                    if(esUnaFiguraValida(escenaPorPalabras[2])){
+                    if (esUnaFiguraValida(escenaPorPalabras[2])) {
                         tipoReal = escenaPorPalabras[2];
                         tipo = 2;
-                    }else if(esUnaFiguraValida(escenaPorPalabras[4])){
+                    } else if (esUnaFiguraValida(escenaPorPalabras[4])) {
                         tipoReal = escenaPorPalabras[4];
                         tipo = 4;
-                    }else if(esUnaFiguraValida(escenaPorPalabras[3])){
+                    } else if (esUnaFiguraValida(escenaPorPalabras[3])) {
                         tipo = 3;
                         tipoReal = escenaPorPalabras[tipo];
                     }
-                    if(esUnTamañoValido(escenaPorPalabras[4])){
+                    if (esUnTamañoValido(escenaPorPalabras[4])) {
                         tamañoReal = normalizarTamaño(escenaPorPalabras[4]);
                         tamaño = 4;
-                    } else if(esUnTamañoValido(escenaPorPalabras[2])){
+                    } else if (esUnTamañoValido(escenaPorPalabras[2])) {
                         tamañoReal = normalizarTamaño(escenaPorPalabras[2]);
                         tamaño = 2;
-                    } else if(esUnTamañoValido(escenaPorPalabras[3])){
+                    } else if (esUnTamañoValido(escenaPorPalabras[3])) {
                         tamaño = 3;
                         tamañoReal = normalizarTamaño(escenaPorPalabras[tamaño]);
                     }
                     //el color se define como el tercer enunciado no encontrado
-                    if((tipo == 4 && tamaño == 2) || tipo == 2 && tamaño == 4){
+                    if ((tipo == 4 && tamaño == 2) || tipo == 2 && tamaño == 4) {
                         colorReal = escenaPorPalabras[3];
-                    } else if((tipo == 4 && tamaño == 3) || (tamaño == 4 && tipo == 3)){
+                    } else if ((tipo == 4 && tamaño == 3) || (tamaño == 4 && tipo == 3)) {
                         colorReal = escenaPorPalabras[2];
-                    } else if(tipo == -1){
-                        switch (tamaño){
-                            case -1:colorReal = escenaPorPalabras[3];
-                            break;
+                    } else if (tipo == -1) {
+                        switch (tamaño) {
+                            case -1:
+                                colorReal = escenaPorPalabras[3];
+                                break;
                         }
                     }
                     // 2 : tipo de gifura ; 4 : tamaño de la figura ; 3 : color de la figura ;
@@ -134,11 +162,14 @@ public class ProcesarReglas {
         return escena;
     }
 
-    private static String normalizarTamaño(String tamaño){
-        switch (tamaño.charAt(0)){
-            case 'c': return "chico";
-            case 'g': return  "grande";
-            case  'm': return "mediano";
+    private static String normalizarTamaño(String tamaño) {
+        switch (tamaño.charAt(0)) {
+            case 'c':
+                return "chico";
+            case 'g':
+                return "grande";
+            case 'm':
+                return "mediano";
         }
         //no debería haber errores en este punto, but, what gives
         //tamaño mediano por defecto
