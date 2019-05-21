@@ -58,9 +58,9 @@ public class Main {
                     //procesarEntonces
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
-                        reglaProcesada += ",";
+                        codigoAlArchivoPl.add(reglaProcesada + ",");
                     }
-                    codigoAlArchivoPl.add(reglaProcesada);
+                    continue why;
                 }
                 //se cierra el bloque de código prolog
                 codigoAlArchivoPl.add("true.");
@@ -70,6 +70,7 @@ public class Main {
     }
 
     private static String procesarRegla(String regla) {
+        System.err.println(regla);
         String X = "X";
         String Y = "Y";
         int i = 0;
@@ -104,6 +105,7 @@ public class Main {
                             }
                         } else if (regl[3].equals("poner") || regl[3].equals("colocar") || regl[3].equals("pon") || regl[3].equals("coloca") || regl[3].equals("crea") || regl[3].equals("crear")) {
                             //cómo poner el objeto
+                            return "aquí va la línea que crea el objeto.";
                         }
                     }
                 }
