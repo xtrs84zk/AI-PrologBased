@@ -7,7 +7,7 @@ public class Main {
     private static ArrayList<String> codigoAlArchivoPl;
 
     public static void main(String[] args) {
-        String rutaAGuardarElArchivo = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/escenario.pl";
+        String rutaAGuardarElArchivo = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.pl";
         //cargando el codigo desde un archivo de texto
         ArrayList codigo;
         codigoAlArchivoPl = new ArrayList<>();
@@ -31,10 +31,11 @@ public class Main {
      * @return null
      */
     private static void procesarReglasDesdeLenguajeNatural(ArrayList<String> lineasDelLenguajeNaturalAProcesar) {
-        if (lineasDelLenguajeNaturalAProcesar.get(0).equals("si")) {
-            String reglaProcesada = "";
-            why:
-            for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
+        // if (lineasDelLenguajeNaturalAProcesar.get(0).equals("si")) {
+        String reglaProcesada = "";
+        why:
+        for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
+            while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("si")) {
                 while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces")) {
                     //procesarRegla
                     //agregar la regla procesada a un .pl
@@ -49,119 +50,147 @@ public class Main {
                         codigoAlArchivoPl.add(reglaProcesada);
                         continue why;
                     } else {
-                        codigoAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + "').");
+                        codigoAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + "'),");
                         continue why;
                     }
                 }
                 //se encontró el entonces
-                while (i < lineasDelLenguajeNaturalAProcesar.size() && !lineasDelLenguajeNaturalAProcesar.get(i).equals("si")) {
+                while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("si")) {
                     //procesarEntonces
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
-                        if (reglaProcesada.equals("")) {
-                            continue why;
+                        if (!reglaProcesada.equals("")) {
+                            codigoAlArchivoPl.add(reglaProcesada + ",");
                         }
-                        codigoAlArchivoPl.add(reglaProcesada + ",");
                     }
                     continue why;
                 }
                 //se cierra el bloque de código prolog
-                codigoAlArchivoPl.add("true.");
+                codigoAlArchivoPl.add("true. \n");
             }
+            codigoAlArchivoPl.add("true. \n");
         }
+        codigoAlArchivoPl.add("true. \n");
+        //}
     }
 
     private static String procesarRegla(String regla) {
-        String X;
-        String Y;
-        String[] regl = regla.split(" ");
-        if (regl.length < 1 || regla.equals("\\s")) {
-            return "";
-        }
-            if (regl[0].equals("la")) {
-                if (regl[1].equals("orden")) {
-                    if (regl[2].equals("es")) {
-                        //Se ha aceptado una gramática "La orden es"
-                        if (regl[3].equals("quitar") || regl[3].equals("remover") || regl[3].equals("retirar") || regl[3].equals("quita") || regl[3].equals("retira")) {
-                            //cómo procesar el quitado
-                            if (regl[4].equals("el")) {
-                                if (regl[5].equals("objeto")) {
-                                    //agregar el nombre de la variable que venga en la regla por si acaso
-                                    X = regl[6];
-                                    //continua la interpretación buscando un sobre o de
-                                    if (regl[7].equals("sobre") || regl[7].equals("de")) {
-                                        if (regl[8].equals("el")) {
-                                            if (regl[9].equals("objeto")) {
-                                                Y = regl[10];
-                                                //agregar eso a prolog
-                                                return "quitar(" + X + "," + Y + "):-";
-                                                //quitar(Y,X):-
-                                            }
-                                        }
-                                    } else if (regl[7].equals("del")) {
-                                        if (regl[8].equals("objeto")) {
-                                            Y = regl[9];
-                                            return "quitar(" + X + "," + Y + "),";
-                                        }
-                                    }
-                                }
-                            }
-                        } else if (regl[3].equals("poner") || regl[3].equals("colocar") || regl[3].equals("pon") || regl[3].equals("coloca") || regl[3].equals("crea") || regl[3].equals("crear")) {
-                            //cómo poner el objeto
-                            return "aquí va la línea que crea el objeto.";
-                        }
-                    }
-                }
-            } else if (regl[0].equals("el")) {
-                if (regl[1].equals("objeto")) {
-                    X = regl[2];
-                    if (regl[3].equals("está")) {
-                        if (regl[4].equals("encima") || regl[4].equals("sobre")) {
-                            if (regl[5].equals("del") || regl[5].equals("de")) {
-                                if (regl[6].equals("objeto")) {
-                                    Y = regl[7];
-                                    //regresar la linea en prolog
-                                    return "sobre(" + X + "," + Y + ")";
-                                }
-                            }
-                        } else if (regl[4].equals("vacío") || regl[4].equals("solo")) {
-                            return "sobre(nada," + X + ")";
-                        }
-                    }
-                }
-            } else if (regl[0].equals("poner")) {
-                if (regl[1].equals("el")) {
-                    if (regl[2].equals("objeto")) {
-                        X = regl[3];
-                        if (regl[4].equals("en")) {
-                            if (regl[5].equals("el")) {
-                                if (regl[6].equals("piso")) {
-                                    return "assert(" + X + ",piso)";
-                                }
-                            }
-                        }
-                    }
-                }
+        String[] reglaPorPalabras = regla.split(" ");
+        int tamañoDeLaReglaEnPalabras;
+        tamañoDeLaReglaEnPalabras = reglaPorPalabras.length;
+        switch (tamañoDeLaReglaEnPalabras) {
+            case 11:
+                //la orden es quitar el objeto X sobre el objeto Y
+                if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("orden")
+                        && reglaPorPalabras[2].equals("es") && reglaPorPalabras[3].equals("quitar")
+                        && reglaPorPalabras[4].equals("el") && reglaPorPalabras[5].equals("objeto")
+                        && reglaPorPalabras[7].equals("sobre") && reglaPorPalabras[8].equals("el")
+                        && reglaPorPalabras[9].equals("objeto")) {
+                    return quitarProlog(reglaPorPalabras[6], reglaPorPalabras[10]) + ":-";
 
-            } else if (regl[0].equals("limpiar")) {
-                if (regl[1].equals("el")) {
-                    if (regl[2].equals("objeto")) {
-                        Y = regl[3];
-                        return "retract(sobre(X," + Y + "), assert(sobre(nada," + Y + ")";
-                    }
                 }
+                //la orden es mover el objeto X encima del objeto Y
+                if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("orden")
+                        && reglaPorPalabras[2].equals("es") && reglaPorPalabras[3].equals("mover")
+                        && reglaPorPalabras[4].equals("el") && reglaPorPalabras[5].equals("objeto")
+                        && (reglaPorPalabras[7].equals("sobre") || reglaPorPalabras[7].equals("encima"))
+                        && (reglaPorPalabras[8].equals("el") || reglaPorPalabras[8].equals("del"))
+                        && reglaPorPalabras[9].equals("objeto")) {
+                    return moverProlog(reglaPorPalabras[6], reglaPorPalabras[10]) + ":-";
+                }
+                break;
+            //la orden es quitar el objeto z del objeto y
+            case 10:
+                if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("orden")
+                        && reglaPorPalabras[2].equals("es") && reglaPorPalabras[3].equals("quitar")
+                        && reglaPorPalabras[4].equals("el") && reglaPorPalabras[5].equals("objeto")
+                        && reglaPorPalabras[7].equals("del") && reglaPorPalabras[8].equals("objeto")) {
+                    return quitarProlog(reglaPorPalabras[6], reglaPorPalabras[9]) + "";
+                }
+                break;
+            case 8:
+                //el objeto X está encima del objeto Y
+                if (reglaPorPalabras[0].equals("el") && reglaPorPalabras[1].equals("objeto")
+                        && reglaPorPalabras[3].equals("está") && reglaPorPalabras[4].equals("encima")
+                        && reglaPorPalabras[5].equals("del") && reglaPorPalabras[6].equals("objeto")) {
+                    return sobreProlog(reglaPorPalabras[2], reglaPorPalabras[7]);
+                }
+                //poner el objeto X sobre el objeto Y
+                if (reglaPorPalabras[0].equals("poner") && reglaPorPalabras[1].equals("el")
+                        && reglaPorPalabras[2].equals("objeto") && reglaPorPalabras[4].equals("sobre")
+                        && reglaPorPalabras[5].equals("el") && reglaPorPalabras[6].equals("objeto")) {
+                    return ponerEncima(reglaPorPalabras[3], reglaPorPalabras[7]);
+                }
+                break;
+            //limpiar el objeto Y
+            case 4:
+                if (reglaPorPalabras[0].equals("limpiar") && reglaPorPalabras[1].equals("el")
+                        && reglaPorPalabras[2].equals("objeto")) {
+                    return limpiarProlog(reglaPorPalabras[3]);
+                }
+                break;
+            case 7:
+                //poner el objeto Y en el piso
+                if (reglaPorPalabras[0].equals("poner") && reglaPorPalabras[1].equals("el")
+                        && reglaPorPalabras[2].equals("objeto") && reglaPorPalabras[4].equals("en")
+                        && reglaPorPalabras[5].equals("el") && reglaPorPalabras[6].equals("piso")) {
+                    return moverAlPisoProlog(reglaPorPalabras[3]);
+                }
+                break;
+            //El objeto X está vacío
+            case 5:
+                if (reglaPorPalabras[0].equals("el") && reglaPorPalabras[1].equals("objeto")
+                        && (reglaPorPalabras[3].equals("está") || reglaPorPalabras[3].equals("esta")) && reglaPorPalabras[4].equals("vacío")) {
+                    return verificacionDeObjetoVacioProlog(reglaPorPalabras[2]);
+                }
+                break;
+            case 2:
+                //Limpiar Y
+                if (reglaPorPalabras[0].equals("limpiar")) {
+                    return limpiarProlog(reglaPorPalabras[1]);
+                }
+            default:
+                return "";
         }
-        return null;
+        return "";
+    }
+
+    private static String moverProlog(String X, String Y) {
+        return "mover(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
+    }
+
+    private static String verificacionDeObjetoVacioProlog(String X) {
+        return "sobre(nada" + "," + X.toUpperCase() + ")";
+    }
+
+    private static String ponerEncima(String X, String Y) {
+        return "assert(sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
+    }
+
+    private static String moverAlPisoProlog(String X) {
+        return "assert(sobre(" + X.toUpperCase() + ",piso)";
+    }
+
+    private static String limpiarProlog(String X) {
+        return "retract(sobre(nada," + X.toUpperCase() + ")";
+    }
+
+    private static String quitarProlog(String X, String Y) {
+        return "quitar(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
+    }
+
+    private static String sobreProlog(String X, String Y) {
+        return "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
     }
 
     private static String procesarLinea(String linea) {
         //asegurándome de que no haya espacios antes de la primer palabra o después de la última
-        //linea = eliminarEspaciosAlInicioYFinal(linea);
-        //linea = "'" + linea + "'.";
+        linea = eliminarEspaciosAlInicioYFinal(linea);
         return linea;
     }
 
     private static String eliminarEspaciosAlInicioYFinal(String linea) {
+        linea += " ";
         String nuevaString = "";
         int cantidadDeEspacios = 0;
         why:
@@ -176,8 +205,6 @@ public class Main {
             if (cantidadDeEspacios > 0 && !nuevaString.equals("")) {
                 if (!(i == linea.length() - 1)) {
                     nuevaString += " ";
-                } else {
-                    nuevaString += "";
                 }
             }
             //se concatena la siguiente letra a la String
@@ -195,7 +222,7 @@ public class Main {
      */
     private static ArrayList cargarUnArchivoDeTexto() throws IOException {
         ArrayList<String> archivoDeTextoPorLineas;
-        File archivoDelCodigo = new File("/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/escenario.txt");
+        File archivoDelCodigo = new File("/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.txt");
         InputStreamReader input;
         input = new InputStreamReader(new FileInputStream(archivoDelCodigo), StandardCharsets.UTF_8);
         archivoDeTextoPorLineas = new ArrayList<>();

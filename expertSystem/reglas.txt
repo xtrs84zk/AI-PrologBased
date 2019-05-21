@@ -1,0 +1,24 @@
+Si
+La orden es quitar el objeto X sobre el objeto Y 
+El objeto X está encima del objeto Y 
+El objeto X está vacío 
+Entonces 
+Poner el objeto X en el piso 
+Limpiar el objeto Y 
+ 
+Si 
+La orden es quitar el objeto X sobre el objeto Y 
+El objeto X está encima del objeto Y 
+El objeto Z está encima del objeto X 
+Entonces 
+La orden es quitar el objeto Z del objeto X 
+
+Si
+La orden es mover el objeto X encima del objeto Y
+El objeto X está vacío
+El objeto Y está vacío
+Entonces
+Limpiar Y
+Poner el objeto X sobre el objeto Y
+
+
