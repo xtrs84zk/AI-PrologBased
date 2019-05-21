@@ -12,11 +12,12 @@ public class Main {
         codigoAlArchivoPl = new ArrayList<String>();
         try {
             codigo = cargarCodigoDesdeUnArchivoDeTexto();
+            System.out.println("" + codigo.size() + codigo.get(0));
         } catch (Exception e) {
             System.err.println("Error al encontrar el archivo.");
         }
+        procesarReglasDesdeLenguajeNatural(codigo);
         try {
-            System.out.println(codigoAlArchivoPl.toString());
             escribirElResultadoAUnArchivo(codigoAlArchivoPl, rutaAGuardarElArchivo);
         } catch (Exception f) {
             f.printStackTrace();
@@ -29,14 +30,16 @@ public class Main {
      * @param lineasDelLenguajeNaturalAProcesar
      * @return
      */
-    private static String procesarReglasDesdeLenguajeNatural(ArrayList<String> lineasDelLenguajeNaturalAProcesar) {
+    private static void procesarReglasDesdeLenguajeNatural(ArrayList<String> lineasDelLenguajeNaturalAProcesar) {
         if (lineasDelLenguajeNaturalAProcesar.get(0).equals("si")) {
+            System.err.println("Se procesó el primer sí.");
             String reglaProcesada = "";
             why:
             for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
                 System.out.println(reglaProcesada);
-                while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces") && i < lineasDelLenguajeNaturalAProcesar.size()) {
+                while (i < lineasDelLenguajeNaturalAProcesar.size() && !lineasDelLenguajeNaturalAProcesar.get(i).equals("entonces")) {
                     //procesarRegla
+                    //System.err.println(i);
                     //agregar la regla procesada a un .pl
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
@@ -47,10 +50,11 @@ public class Main {
                         continue why;
                     } else {
                         codigoAlArchivoPl.add("write('Regla mal redactada, revisar línea: " + i + ".");
+                        continue why;
                     }
                 }
                 //se encontró el entonces
-                while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("si") && i < lineasDelLenguajeNaturalAProcesar.size()) {
+                while (i < lineasDelLenguajeNaturalAProcesar.size() && !lineasDelLenguajeNaturalAProcesar.get(i).equals("si")) {
                     //procesarEntonces
                     reglaProcesada = procesarRegla(lineasDelLenguajeNaturalAProcesar.get(i));
                     if (reglaProcesada != null) {
@@ -62,7 +66,7 @@ public class Main {
                 codigoAlArchivoPl.add("true.");
             }
         }
-        return null;
+        return;
     }
 
     private static String procesarRegla(String regla) {
@@ -70,7 +74,6 @@ public class Main {
         String Y = "Y";
         int i = 0;
         String[] regl = regla.split(" ");
-        while (true) {
             if (regl[0].equals("la")) {
                 if (regl[1].equals("orden")) {
                     if (regl[2].equals("es")) {
@@ -142,8 +145,6 @@ public class Main {
                         return "retract(sobre(X," + Y + "), assert(sobre(nada," + Y + ")";
                     }
                 }
-            }
-            break;
         }
         return null;
     }
@@ -161,7 +162,7 @@ public class Main {
     private static String procesarLinea(String linea) {
         //asegurándome de que no haya espacios antes de la primer palabra o después de la última
         linea = eliminarEspaciosAlInicioYFinal(linea);
-        linea = "'" + linea + "'.";
+        //linea = "'" + linea + "'.";
         return linea;
     }
 
@@ -171,7 +172,7 @@ public class Main {
         why:
         for (int i = 0; i < linea.length(); i++) {
             //Eliminando espacios al final
-            while (linea.charAt(i) == ' ' && i < linea.length()) {
+            while (i < linea.length() && linea.charAt(i) == ' ') {
                 cantidadDeEspacios++;
                 continue why;
             }
