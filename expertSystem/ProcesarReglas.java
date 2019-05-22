@@ -13,7 +13,7 @@ public class ProcesarReglas {
         String rutaParaGuardarElEscenario = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/scenario.pl";
         //cargando las reglas y el escenario EnCrudo desde un archivo de texto
         ArrayList reglasEnCrudo;
-        ArrayList<String> escenarioEnCrudo = new ArrayList<String>();
+        ArrayList<String> escenarioEnCrudo;
         codigoDeReglasAlArchivoPl = new ArrayList<>();
         ArrayList<String> codigoDeEscenarioAlArchivoPl = new ArrayList<>();
         try {
@@ -166,9 +166,78 @@ public class ProcesarReglas {
                     return crearFigura(tipoReal, tamanoReal, colorReal, "");
                 }
                 break;
-
+            case 11:
+                //Arriba del cubo azul grande se encuentra el cubo rojo mediano
+                if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("del")
+                        && escenaPorPalabras[5].equals("se") && escenaPorPalabras[6].equals("encuentra")
+                        && escenaPorPalabras[7].equals("el")) {
+                    tamano = encontrarTamañoValido(escenaPorPalabras, 2, 3, 4);
+                    if (tamano != -1) {
+                        tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
+                    }
+                    tipo = encontrarFiguraValida(escenaPorPalabras, 2, 3, 4);
+                    if (tipo != -1) {
+                        tipoReal = escenaPorPalabras[tipo];
+                    }
+                    if ((tipo == 4 && tamano == 2) || tipo == 2 && tamano == 4) {
+                        colorReal = escenaPorPalabras[3];
+                    } else if ((tipo == 4 && tamano == 3) || (tamano == 4 && tipo == 3)) {
+                        colorReal = escenaPorPalabras[2];
+                    } else {
+                        System.err.println("Error al buscar figura en línea '" + escena + "'");
+                        return "";
+                    }
+                    String figura1 = accederFigura(tipoReal, tamanoReal, colorReal);
+                    tamano = encontrarTamañoValido(escenaPorPalabras, 8, 9, 10);
+                    tipo = encontrarFiguraValida(escenaPorPalabras, 8, 9, 10);
+                    if (tipo != -1 && tamano != -1) {
+                        tipoReal = escenaPorPalabras[tipo];
+                        tamanoReal = escenaPorPalabras[tamano];
+                        if ((tamano == 8 && tipo == 9) || tamano == 9 && tipo == 8) {
+                            colorReal = escenaPorPalabras[10];
+                        } else if ((tamano == 10 && tipo == 9) || (tamano == 9 && tipo == 10)) {
+                            colorReal = escenaPorPalabras[8];
+                        } else {
+                            colorReal = escenaPorPalabras[9];
+                        }
+                        return "retract(sobre(nada," + figura1 + "). \n" + crearFigura(tipoReal, tamanoReal, colorReal, "", figura1);
+                    }
+                }
+                break;
         }
-        return escena;
+        return "";
+    }
+
+    /**
+     * Verifica que el texto contenido en cada una de las tres opciones
+     * sea un tamaño válido y regresa donde lo encontró
+     * En caso de no encontrarlo, regresa un -1
+     */
+    private static int encontrarTamañoValido(String[] dondeBuscar, int opcion1, int opcion2, int opcion3) {
+        if (esUnTamanoValido(dondeBuscar[opcion1])) {
+            return opcion1;
+        } else if (esUnTamanoValido(dondeBuscar[opcion2])) {
+            return opcion2;
+        } else if (esUnTamanoValido(dondeBuscar[opcion3])) {
+            return opcion3;
+        }
+        return -1;
+    }
+
+    /**
+     * Verifica que el texto contenido en alguna de las tres opciones
+     * sea un tipo soportado de figura, y regresa donde lo encontró
+     * en caso contrario, regresa -1
+     */
+    private static int encontrarFiguraValida(String[] dondeBuscar, int opcion1, int opcion2, int opcion3) {
+        if (esUnaFiguraValida(dondeBuscar[opcion1])) {
+            return opcion1;
+        } else if (esUnaFiguraValida(dondeBuscar[opcion2])) {
+            return opcion2;
+        } else if (esUnaFiguraValida(dondeBuscar[opcion3])) {
+            return opcion3;
+        }
+        return -1;
     }
 
     /**
@@ -245,6 +314,46 @@ public class ProcesarReglas {
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
                 "sobre(" + X.toUpperCase() + ",piso). \n";
+    }
+
+    /**
+     * Procesa los parámetros y los convierte a sintaxis Prolog
+     *
+     * @param tipo   de la figura
+     * @param tamano de la figura
+     * @param color  de la figura
+     * @param X      o nombre de la figura
+     * @return sintaxis en lenguaje Prolog
+     */
+    private static String crearFigura(String tipo, String tamano, String color, String X, String Y) {
+        if (tipo.equals("")) {
+            tipo = "cubo";
+        }
+        if (tamano.equals("")) {
+            tamano = "chico";
+        }
+        if (color.equals("")) {
+            color = ("azul");
+        }
+        if (X.equals("")) {
+            X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+        }
+        return "tamano(" + X.toUpperCase() + "," + "). \n" +
+                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
+                "color(" + X.toUpperCase() + "," + color + "). \n" +
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
+    }
+
+    /**
+     * Accede a la última variable creada con dichas características
+     *
+     * @param tipo   de la figura
+     * @param tamano de la figura
+     * @param color  de la figura
+     * @return nombre de la figura
+     */
+    private static String accederFigura(String tipo, String tamano, String color) {
+        return (tipo + tamano + color + cantidadDeCubosAnonimos).toUpperCase();
     }
 
     /**
