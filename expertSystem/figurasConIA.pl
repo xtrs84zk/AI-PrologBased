@@ -4,33 +4,18 @@
 :- dynamic escenario/1.
 :- dynamic reglas/2.
 :- dynamic sobre/2.
+:- dynamic tipo/2.
 :- dynamic estado/2.
+:- dynamic color/2.
 :- dynamic tipo_de_objeto/2.
 :- dynamic lectura/0.
 :- dynamic writeln/1.
-
-%%Accediendo al complemento para procesar el lenguaje natural.
-%%consult('naturalLanguajeProcessing.pl').
+:- include('scenario').
+:- include('reglas').
+%%cargando escenario y reglas
 
 %%Accesando al archivo donde se describe el escenario
 %%Fragmento adaptado de http://cs.union.edu/~striegnk/learn-prolog-now/html/node106.html
-
-%%acceso para correr pruebas más rápido, recordatorio para eliminar esta línea después
-a:- leyendoElArchivoDelEscenario.
-
-leyendoElArchivoDelEscenario:-
-    open('escenario.pl', read, Str),
-    read_file(Str,Lines),
-    close(Str),
-    procesar(Lines), nl.
-
-read_file(Stream,[]) :-
-    at_end_of_stream(Stream).
-
-read_file(Stream,[X|L]) :-
-    \+ at_end_of_stream(Stream),
-    read(Stream,X),
-    read_file(Stream,L).
 
 %%Cargando las reglas a la base de conocimiento, i guess
 %%consult('rules.pl').
@@ -61,10 +46,6 @@ crear(TipoDeFigura,Size,FiguraNueva,Como,RespectoA):- not(sobre(FiguraNueva,_)),
 									TipoDeFigura = cubo -> crearCubo(FiguraNueva,RespectoA,Size);
 									otherwise -> escribirLinea('Tipo no permitido.')
 									).
-									
-crear(TipoDeFigura,Size,FiguraNueva,Como,RespectoA):-member(Como,[dentro,adentro]),
-													 not(dentro(FiguraNueva,_)),
-													 not(sobre())
 													 
 									
 %%no se está otorgando suficiente información, se procede a inferir
@@ -82,7 +63,7 @@ crearCubo(NuevoCubo,CuboDebajo,Size):- member(CuboDebajo,[piso,suelo,firme]).
 								  
 crearCubo(NuevoCubo,CuboDebajo,Size):- sobre(CuboDebajo,_),
 								  sobre(nada,CuboDebajo),
-								  assert(tipo_de_objeto(cubo,))
+								  assert(tipo_de_objeto(NuevoCubo,cubo)),
 								  assert(shapeSize(NuevoCubo,Size)),
 								  assert(sobre(NuevoCubo,CuboDebajo)),
 								  asser(sobre(nada,NuevoCubo)),

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 public class ProcesarReglas {
     private static ArrayList<String> codigoDeReglasAlArchivoPl;
-    private static int cantidadDeCubosAnonimos = 0;
 
     public static void main(String[] args) {
         String rutaAGuardarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.pl";
@@ -384,7 +383,7 @@ public class ProcesarReglas {
             color = ("azul");
         }
         if (X.equals("")) {
-            X = tipo + tamano + color + cantidadDeCubosAnonimos;
+            X = tipo + tamano + color;
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
@@ -411,7 +410,7 @@ public class ProcesarReglas {
                 color = ("azul");
             }
             if (X.equals("")) {
-                X = tipo + tamano + color + cantidadDeCubosAnonimos;
+                X = tipo + tamano + color;
             }
             return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                     "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
@@ -445,7 +444,7 @@ public class ProcesarReglas {
             color = ("azul");
         }
         if (X.equals("")) {
-            X = tipo + tamano + color + cantidadDeCubosAnonimos;
+            X = tipo + tamano + color;
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
@@ -472,7 +471,7 @@ public class ProcesarReglas {
                 color = ("azul");
             }
             if (X.equals("")) {
-                X = tipo + tamano + color + cantidadDeCubosAnonimos;
+                X = tipo + tamano + color;
             }
             return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                     "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
@@ -495,7 +494,7 @@ public class ProcesarReglas {
      * @return nombre de la figura
      */
     private static String accederFigura(String tipo, String tamano, String color) {
-        return (tipo + tamano + color + cantidadDeCubosAnonimos).toUpperCase();
+        return (tipo + tamano + color).toUpperCase();
     }
 
     /**
@@ -595,15 +594,15 @@ public class ProcesarReglas {
     }
 
     private static String ponerEncima(String X, String Y) {
-        return "assert(sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
+        return "assert(sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "))";
     }
 
     private static String moverAlPisoProlog(String X) {
-        return "assert(sobre(" + X.toUpperCase() + ",piso)";
+        return "assert(sobre(" + X.toUpperCase() + ",piso))";
     }
 
     private static String limpiarProlog(String X) {
-        return "retract(sobre(nada," + X.toUpperCase() + ")";
+        return "retract(sobre(nada," + X.toUpperCase() + "))";
     }
 
     private static String quitarProlog(String X, String Y) {
