@@ -26,39 +26,6 @@ escribirLinea(Line):- (
       Line = [A|B] -> escribirLinea(A), escribirLinea(B);
       otherwise    -> write(Line)
     ).
-
-%%las figuras se crearán en los métodos siguientes
-%%la información suficiente se está otorgando
-crear(TipoDeFigura,Size,FiguraNueva,Como,RespectoA):- not(sobre(FiguraNueva,_)),
-									not(dentro(FiguraNueva,_)),
-									member(Como,[sobre,encima,arriba]),
-									member(Size,[chico,mediano,grande,chica,mediana]),
-									(
-									TipoDeFigura = cubo -> crearCubo(FiguraNueva,RespectoA,Size);
-									otherwise -> escribirLinea('Tipo no permitido.')
-									).
-													 
-									
-%%no se está otorgando suficiente información, se procede a inferir
-%%por motivos personales, será un cubo
-crear(FiguraNueva):- crearCubo(FiguraNueva).									
-									
-%%los cubos se crearán en varios métodos debajo, redirijir aquí
-%%Cubo que va sobre el piso -posibilidad 1 : por defecto
-crearCubo(NuevoCubo):- not(sobre(CuboDebajo,_)),
-					   %%wait
-					   escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el piso.'],nl).
-					   
-%%Cubo que va sobre el piso -posibilidad 2 : se especificó crearle sobre el piso
-crearCubo(NuevoCubo,CuboDebajo,Size):- member(CuboDebajo,[piso,suelo,firme]).
-								  
-crearCubo(NuevoCubo,CuboDebajo,Size):- sobre(CuboDebajo,_),
-								  sobre(nada,CuboDebajo),
-								  assert(tipo_de_objeto(NuevoCubo,cubo)),
-								  assert(shapeSize(NuevoCubo,Size)),
-								  assert(sobre(NuevoCubo,CuboDebajo)),
-								  asser(sobre(nada,NuevoCubo)),
-								  escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el cubo ',CuboDebajo,'.']).
 								  
 %%Procesamiento de lenguaje natural, prolog; 
 %%La idea de este código es ser lo más modular posible
@@ -206,7 +173,42 @@ procesar([V,CANT,PREPOSICION,X]):- member(V,[coloca,colocar,pon]),
 %%esto es meramente experimental, proceder con precaución										
 procesar([X|R]):- procesar(X),procesar(R).
 										
-procesar(X):- escribirLinea([nl,'por alguna razón, falló al procesar, la línea era: "',X,'"']).
+%%procesar(X):- escribirLinea([nl,'por alguna razón, falló al procesar, la línea era: "',X,'"']).
 										
 %%qué ocurre si el campo está vacío
 procesar([]):- writeln('El campo está vacío.'), true.
+
+
+
+%%las figuras se crearán en los métodos siguientes
+%%la información suficiente se está otorgando
+crear(TipoDeFigura,Size,FiguraNueva,Como,RespectoA):- not(sobre(FiguraNueva,_)),
+									not(dentro(FiguraNueva,_)),
+									member(Como,[sobre,encima,arriba]),
+									member(Size,[chico,mediano,grande,chica,mediana]),
+									(
+									TipoDeFigura = cubo -> crearCubo(FiguraNueva,RespectoA,Size);
+									otherwise -> escribirLinea('Tipo no permitido.')
+									).
+													 
+									
+%%no se está otorgando suficiente información, se procede a inferir
+%%por motivos personales, será un cubo
+crear(FiguraNueva):- crearCubo(FiguraNueva).									
+									
+%%los cubos se crearán en varios métodos debajo, redirijir aquí
+%%Cubo que va sobre el piso -posibilidad 1 : por defecto
+crearCubo(NuevoCubo):- not(sobre(CuboDebajo,_)),
+					   %%wait
+					   escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el piso.'],nl).
+					   
+%%Cubo que va sobre el piso -posibilidad 2 : se especificó crearle sobre el piso
+crearCubo(NuevoCubo,CuboDebajo,Size):- member(CuboDebajo,[piso,suelo,firme]).
+								  
+crearCubo(NuevoCubo,CuboDebajo,Size):- sobre(CuboDebajo,_),
+								  sobre(nada,CuboDebajo),
+								  assert(tipo_de_objeto(NuevoCubo,cubo)),
+								  assert(shapeSize(NuevoCubo,Size)),
+								  assert(sobre(NuevoCubo,CuboDebajo)),
+								  asser(sobre(nada,NuevoCubo)),
+								  escribirLinea([nl,'Se creó el cubo ',NuevoCubo,' sobre el cubo ',CuboDebajo,'.']).
