@@ -554,11 +554,18 @@ public class ProcesarReglas {
                     return ponerEncima(reglaPorPalabras[3], reglaPorPalabras[7]);
                 }
                 break;
-            //limpiar el objeto Y
             case 4:
+                //limpiar el objeto Y
                 if (reglaPorPalabras[0].equals("limpiar") && reglaPorPalabras[1].equals("el")
                         && reglaPorPalabras[2].equals("objeto")) {
                     return limpiarProlog(reglaPorPalabras[3]);
+                }
+                //abrir la caja X
+                if (reglaPorPalabras[0].equals("abrir") && reglaPorPalabras[1].equals("la")
+                        && reglaPorPalabras[2].equals("caja")) {
+                    return "retract(estado(" + reglaPorPalabras[3] + "," + "closed)), \n"
+                            + "assert(estado(" + reglaPorPalabras[3] + "," + "open))";
+
                 }
                 break;
             case 7:
@@ -568,12 +575,31 @@ public class ProcesarReglas {
                         && reglaPorPalabras[5].equals("el") && reglaPorPalabras[6].equals("piso")) {
                     return moverAlPisoProlog(reglaPorPalabras[3]);
                 }
+                //La orden es abrir la caja X
+                if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("orden")
+                        && reglaPorPalabras[2].equals("es") && reglaPorPalabras[3].equals("abrir")
+                        && reglaPorPalabras[4].equals("la") && reglaPorPalabras[5].equals("caja")) {
+                    return abrirProlog(reglaPorPalabras[6]) + ":-";
+                }
                 break;
-            //El objeto X está vacío
             case 5:
+                //El objeto X está vacío
                 if (reglaPorPalabras[0].equals("el") && reglaPorPalabras[1].equals("objeto")
-                        && (reglaPorPalabras[3].equals("está") || reglaPorPalabras[3].equals("esta")) && reglaPorPalabras[4].equals("vacío")) {
+                        && (reglaPorPalabras[3].equals("está") || reglaPorPalabras[3].equals("esta"))
+                        && reglaPorPalabras[4].equals("vacío")) {
                     return verificacionDeObjetoVacioProlog(reglaPorPalabras[2]);
+                }
+                //la caja X está vacía
+                if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("caja")
+                        && (reglaPorPalabras[3].equals("está") || reglaPorPalabras[3].equals("esta"))
+                        && (reglaPorPalabras[4].equals("vacía") || reglaPorPalabras[4].equals("vacia"))) {
+                    return verificacionDeObjetoVacioProlog(reglaPorPalabras[2]);
+                }
+                //la caja X está cerrada
+                if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("caja")
+                        && (reglaPorPalabras[3].equals("está") || reglaPorPalabras[3].equals("esta"))
+                        && (reglaPorPalabras[4].equals("cerrada"))) {
+                    return verificacionDeCajaCerradaProlog(reglaPorPalabras[2]);
                 }
                 break;
             case 2:
@@ -581,12 +607,23 @@ public class ProcesarReglas {
                 if (reglaPorPalabras[0].equals("limpiar")) {
                     return limpiarProlog(reglaPorPalabras[1]);
                 }
+                break;
+            case 6:
+                //Quitar el objeto X del piso
+                if (reglaPorPalabras[0].equals("quitar") && reglaPorPalabras[1].equals("el")
+                        && (reglaPorPalabras[2].equals("objeto")) && reglaPorPalabras[4].equals("del")
+                        && reglaPorPalabras[5].equals("piso")) {
+                    return "retract(sobre(" + reglaPorPalabras[3].toUpperCase() + ",piso)";
+                }
             default:
                 return "";
         }
         return "";
     }
 
+    private static String abrirProlog(String X) {
+        return "abrirCaja(" + X + ")";
+    }
     private static String moverProlog(String X, String Y) {
         return "mover(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
     }
@@ -595,6 +632,9 @@ public class ProcesarReglas {
         return "sobre(nada" + "," + X.toUpperCase() + ")";
     }
 
+    private static String verificacionDeCajaCerradaProlog(String X) {
+        return "estado(" + X + "," + "closed)";
+    }
     private static String ponerEncima(String X, String Y) {
         return "assert(sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "))";
     }
@@ -604,7 +644,7 @@ public class ProcesarReglas {
     }
 
     private static String limpiarProlog(String X) {
-        return "retract(sobre(nada," + X.toUpperCase() + "))";
+        return "assert(sobre(nada," + X.toUpperCase() + "))";
     }
 
     private static String quitarProlog(String X, String Y) {
