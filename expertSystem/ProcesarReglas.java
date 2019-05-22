@@ -1,6 +1,7 @@
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class ProcesarReglas {
     private static ArrayList<String> codigoDeReglasAlArchivoPl;
@@ -48,6 +49,7 @@ public class ProcesarReglas {
                 }
                 //exportando el archivo del escenario
                 try {
+                    Collections.sort(codigoDeEscenarioAlArchivoPl);
                     escribirElResultadoAUnArchivo(codigoDeEscenarioAlArchivoPl, rutaParaGuardarElEscenario);
                 } catch (Exception k) {
                     System.err.println("Hubo un error al guardar el archivo de escenario.");
@@ -181,7 +183,7 @@ public class ProcesarReglas {
                             colorReal = escenaPorPalabras[4];
                         }
                     }
-                    return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + "). \n";
+                    return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + ").";
 
                 }
                 break;
@@ -275,7 +277,7 @@ public class ProcesarReglas {
                             colorReal = escenaPorPalabras[5];
                         }
                     }
-                    return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + "). \n";
+                    return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + ").";
                 }
                 break;
 
@@ -388,7 +390,7 @@ public class ProcesarReglas {
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso). \n";
+                "sobre(" + X.toUpperCase() + ",piso). ";
     }
 
     /**
@@ -416,12 +418,12 @@ public class ProcesarReglas {
                     "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                     "estado(" + X.toUpperCase() + "," + estado + "). \n" +
                     "color(" + X.toUpperCase() + "," + color + "). \n" +
-                    "sobre(" + X.toUpperCase() + ",piso). \n";
+                    "sobre(" + X.toUpperCase() + ",piso).";
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso). \n";
+                "sobre(" + X.toUpperCase() + ",piso).";
     }
 
     /**
@@ -449,7 +451,7 @@ public class ProcesarReglas {
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ").";
     }
 
     /**
@@ -477,12 +479,12 @@ public class ProcesarReglas {
                     "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                     "estado(" + X.toUpperCase() + "," + estado + "). \n" +
                     "color(" + X.toUpperCase() + "," + color + "). \n" +
-                    "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
+                    "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ").";
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ").";
     }
 
     /**
