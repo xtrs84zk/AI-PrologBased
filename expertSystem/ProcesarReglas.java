@@ -169,7 +169,7 @@ public class ProcesarReglas {
                 if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("del")
                         && escenaPorPalabras[5].equals("no") && escenaPorPalabras[6].equals("existen")
                         && escenaPorPalabras[7].equals("objetos")) {
-                    tamano = encontrarTamañoValido(escenaPorPalabras, 2, 3, 4);
+                    tamano = encontrarTamanoValido(escenaPorPalabras, 2, 3, 4);
                     tipo = encontrarFiguraValida(escenaPorPalabras, 2, 3, 4);
                     if (tipo != -1 && tamano != -1) {
                         tipoReal = escenaPorPalabras[tipo];
@@ -191,7 +191,7 @@ public class ProcesarReglas {
                 if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("del")
                         && escenaPorPalabras[5].equals("se") && escenaPorPalabras[6].equals("encuentra")
                         && escenaPorPalabras[7].equals("el")) {
-                    tamano = encontrarTamañoValido(escenaPorPalabras, 2, 3, 4);
+                    tamano = encontrarTamanoValido(escenaPorPalabras, 2, 3, 4);
                     if (tamano != -1) {
                         tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
                     }
@@ -208,7 +208,7 @@ public class ProcesarReglas {
                         return "";
                     }
                     String figura1 = accederFigura(tipoReal, tamanoReal, colorReal);
-                    tamano = encontrarTamañoValido(escenaPorPalabras, 8, 9, 10);
+                    tamano = encontrarTamanoValido(escenaPorPalabras, 8, 9, 10);
                     tipo = encontrarFiguraValida(escenaPorPalabras, 8, 9, 10);
                     if (tipo != -1 && tamano != -1) {
                         tipoReal = escenaPorPalabras[tipo];
@@ -227,7 +227,7 @@ public class ProcesarReglas {
                 else if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("del")
                         && (escenaPorPalabras[5].equals("está") || escenaPorPalabras[5].equals("esta"))
                         && escenaPorPalabras[6].equals("una")) {
-                    tamano = encontrarTamañoValido(escenaPorPalabras, 2, 3, 4);
+                    tamano = encontrarTamanoValido(escenaPorPalabras, 2, 3, 4);
                     tipo = encontrarFiguraValida(escenaPorPalabras, 2, 3, 4);
                     if (tipo != -1 && tamano != -1) {
                         tipoReal = escenaPorPalabras[tipo];
@@ -240,7 +240,7 @@ public class ProcesarReglas {
                             colorReal = escenaPorPalabras[2];
                         }
                         String figura1 = accederFigura(tipoReal, tamanoReal, colorReal);
-                        tamano = encontrarTamañoValido(escenaPorPalabras, 7, 8, 9);
+                        tamano = encontrarTamanoValido(escenaPorPalabras, 7, 8, 9);
                         tipo = encontrarFiguraValida(escenaPorPalabras, 7, 8, 9);
                         boolean abierta = (escenaPorPalabras[10].equals("abierta") || escenaPorPalabras[10].equals("abierto"));
                         if (tipo != -1 && tamano != -1) {
@@ -263,7 +263,7 @@ public class ProcesarReglas {
                 if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("de")
                         && (escenaPorPalabras[2].equals("la") || escenaPorPalabras[6].equals("no"))
                         && escenaPorPalabras[7].equals("existen") && escenaPorPalabras[8].equals("objetos")) {
-                    tamano = encontrarTamañoValido(escenaPorPalabras, 3, 4, 5);
+                    tamano = encontrarTamanoValido(escenaPorPalabras, 3, 4, 5);
                     tipo = encontrarFiguraValida(escenaPorPalabras, 3, 4, 5);
                     if (tipo != -1 && tamano != -1) {
                         tipoReal = escenaPorPalabras[tipo];
@@ -289,7 +289,7 @@ public class ProcesarReglas {
      * sea un tamaño válido y regresa donde lo encontró
      * En caso de no encontrarlo, regresa un -1
      */
-    private static int encontrarTamañoValido(String[] dondeBuscar, int opcion1, int opcion2, int opcion3) {
+    private static int encontrarTamanoValido(String[] dondeBuscar, int opcion1, int opcion2, int opcion3) {
         if (esUnTamanoValido(dondeBuscar[opcion1])) {
             return opcion1;
         } else if (esUnTamanoValido(dondeBuscar[opcion2])) {
