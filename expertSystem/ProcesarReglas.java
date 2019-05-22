@@ -113,6 +113,12 @@ public class ProcesarReglas {
         //}
     }
 
+    /**
+     * Procesa una oración desde lenguaje natural de forma que ésta sea procesada fácilmente en prolog
+     *
+     * @param escena que es una línea de lenguaje natural
+     * @return la línea en lenguaje prolog
+     */
     private static String procesarEscena(String escena) {
         String[] escenaPorPalabras = escena.split(" ");
         int tipo = -1, tamaño = -1;
@@ -168,6 +174,13 @@ public class ProcesarReglas {
         return escena;
     }
 
+    /**
+     * Define un estándar para el tamaño a utilizar en el código prolog
+     * Por ejemplo, traduce chica a chico
+     *
+     * @param tamaño que es el tamaño a estandarizar
+     * @return String estandarizado
+     */
     private static String normalizarTamaño(String tamaño) {
         switch (tamaño.charAt(0)) {
             case 'c':
@@ -182,6 +195,11 @@ public class ProcesarReglas {
         return "mediano";
     }
 
+    /**
+     * Verifica que la cadena proporcionada sea un tipo de figura válido
+     * @param figura que es el tipo de figura
+     * @return true si es un tipo admitido
+     */
     private static boolean esUnaFiguraValida(String figura) {
         if (figura.equals("cubo")) {
             return true;
@@ -190,6 +208,11 @@ public class ProcesarReglas {
         } else return figura.equals("cilindro");
     }
 
+    /**
+     * Verifica que el tamaño sea válido
+     * @param tamaño que es el tamaño de la figura
+     * @return true si es un tamaño soportado
+     */
     private static boolean esUnTamañoValido(String tamaño) {
         if (tamaño.equals("grande") || tamaño.equals("chico") || tamaño.equals("mediano")) {
             return true;
@@ -197,7 +220,14 @@ public class ProcesarReglas {
         return tamaño.equals("chica") || tamaño.equals("mediana");
     }
 
-
+    /**
+     * Procesa los parámetros y los convierte a sintaxis Prolog
+     * @param tipo de la figura
+     * @param tamaño de la figura
+     * @param color de la figura
+     * @param X o nombre de la figura
+     * @return sintaxis en lenguaje Prolog
+     */
     private static String crearFigura(String tipo, String tamaño, String color, String X) {
         if (tipo.equals("")) {
             tipo = "cubo";
@@ -217,6 +247,12 @@ public class ProcesarReglas {
                 "sobre(" + X.toUpperCase() + ",piso). \n";
     }
 
+    /**
+     * Se intenta procesar la regla de tal suerte que ésta sea traducida a prolog
+     * Primeramente, identificando los componentes clave de la misma
+     * @param regla a identificar
+     * @return codigo Prolog equivalente
+     */
     private static String procesarRegla(String regla) {
         String[] reglaPorPalabras = regla.split(" ");
         int tamañoDeLaReglaEnPalabras;
@@ -326,12 +362,24 @@ public class ProcesarReglas {
         return "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
     }
 
+    /**
+     * Prepara la línea leída para eliminar irregularidades
+     * @param linea a procesar
+     * @return la línea procesada
+     */
     private static String procesarLinea(String linea) {
         //asegurándome de que no haya espacios antes de la primer palabra o después de la última
         linea = eliminarEspaciosAlInicioYFinal(linea);
         return linea;
     }
 
+    /**
+     * Prepara una línea eliminando los espacios al inicio, final
+     * y, en caso de presentarse dos o más consecutivos, los elimina
+     * de tal forma que sólo sea uno
+     * @param linea a procesar
+     * @return línea procesada
+     */
     private static String eliminarEspaciosAlInicioYFinal(String linea) {
         linea += " ";
         String nuevaString = "";
