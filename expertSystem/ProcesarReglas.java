@@ -165,6 +165,26 @@ public class ProcesarReglas {
                     // 2 : tipo de gifura ; 4 : tamano de la figura ; 3 : color de la figura ;
                     return crearFigura(tipoReal, tamanoReal, colorReal, "");
                 }
+                //arriba del cilindro amarillo grande no existen objetos
+                if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("del")
+                        && escenaPorPalabras[5].equals("no") && escenaPorPalabras[6].equals("existen")
+                        && escenaPorPalabras[7].equals("objetos")) {
+                    tamano = encontrarTamañoValido(escenaPorPalabras, 2, 3, 4);
+                    tipo = encontrarFiguraValida(escenaPorPalabras, 2, 3, 4);
+                    if (tipo != -1 && tamano != -1) {
+                        tipoReal = escenaPorPalabras[tipo];
+                        tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
+                        if ((tamano == 3 && tipo == 4) || tamano == 4 && tipo == 3) {
+                            colorReal = escenaPorPalabras[2];
+                        } else if ((tamano == 2 && tipo == 4) || (tamano == 4 && tipo == 2)) {
+                            colorReal = escenaPorPalabras[3];
+                        } else {
+                            colorReal = escenaPorPalabras[4];
+                        }
+                    }
+                    return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + "). \n";
+
+                }
                 break;
             case 11:
                 //Arriba del cubo azul grande se encuentra el cubo rojo mediano
@@ -259,8 +279,6 @@ public class ProcesarReglas {
                     return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + "). \n";
                 }
                 break;
-            //case 8:
-            //arriba del cilindro amarillo grande no existen objetos
 
         }
         return "";
