@@ -3,8 +3,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class ProcesarReglas {
-    private static ArrayList<String> codigoDeReglasAlArchivoPl, codigoDeEscenarioAlArchivoPl;
-    private static ArrayList<String> codigoDelEscenario;
+    private static ArrayList<String> codigoDeReglasAlArchivoPl;
     private static int cantidadDeCubosAnonimos = 0;
 
     public static void main(String[] args) {
@@ -16,7 +15,7 @@ public class ProcesarReglas {
         ArrayList reglasEnCrudo;
         ArrayList<String> escenarioEnCrudo = new ArrayList<String>();
         codigoDeReglasAlArchivoPl = new ArrayList<>();
-        codigoDeEscenarioAlArchivoPl = new ArrayList<>();
+        ArrayList<String> codigoDeEscenarioAlArchivoPl = new ArrayList<>();
         try {
             //Cargando el archivo de reglas
             reglasEnCrudo = cargarUnArchivoDeTexto(rutaParaCargarElArchivoDeReglas);
@@ -71,7 +70,7 @@ public class ProcesarReglas {
      */
     private static void procesarReglasDesdeLenguajeNatural(ArrayList<String> lineasDelLenguajeNaturalAProcesar) {
         // if (lineasDelLenguajeNaturalAProcesar.get(0).equals("si")) {
-        String reglaProcesada = "";
+        String reglaProcesada;
         why:
         for (int i = 1; i < lineasDelLenguajeNaturalAProcesar.size(); i++) {
             while (!lineasDelLenguajeNaturalAProcesar.get(i).equals("si")) {
@@ -121,8 +120,8 @@ public class ProcesarReglas {
      */
     private static String procesarEscena(String escena) {
         String[] escenaPorPalabras = escena.split(" ");
-        int tipo = -1, tamaño = -1;
-        String tamañoReal = "";
+        int tipo = -1, tamano = -1;
+        String tamanoReal = "";
         String tipoReal = "";
         String colorReal = "";
         int cantidadDePalabrasEnLaEscenaDescrita = escenaPorPalabras.length;
@@ -143,30 +142,28 @@ public class ProcesarReglas {
                         tipo = 3;
                         tipoReal = escenaPorPalabras[tipo];
                     }
-                    if (esUnTamañoValido(escenaPorPalabras[4])) {
-                        tamañoReal = normalizarTamaño(escenaPorPalabras[4]);
-                        tamaño = 4;
-                    } else if (esUnTamañoValido(escenaPorPalabras[2])) {
-                        tamañoReal = normalizarTamaño(escenaPorPalabras[2]);
-                        tamaño = 2;
-                    } else if (esUnTamañoValido(escenaPorPalabras[3])) {
-                        tamaño = 3;
-                        tamañoReal = normalizarTamaño(escenaPorPalabras[tamaño]);
+                    if (esUnTamanoValido(escenaPorPalabras[4])) {
+                        tamanoReal = normalizarTamano(escenaPorPalabras[4]);
+                        tamano = 4;
+                    } else if (esUnTamanoValido(escenaPorPalabras[2])) {
+                        tamanoReal = normalizarTamano(escenaPorPalabras[2]);
+                        tamano = 2;
+                    } else if (esUnTamanoValido(escenaPorPalabras[3])) {
+                        tamano = 3;
+                        tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
                     }
                     //el color se define como el tercer enunciado no encontrado
-                    if ((tipo == 4 && tamaño == 2) || tipo == 2 && tamaño == 4) {
+                    if ((tipo == 4 && tamano == 2) || tipo == 2 && tamano == 4) {
                         colorReal = escenaPorPalabras[3];
-                    } else if ((tipo == 4 && tamaño == 3) || (tamaño == 4 && tipo == 3)) {
+                    } else if ((tipo == 4 && tamano == 3) || (tamano == 4 && tipo == 3)) {
                         colorReal = escenaPorPalabras[2];
                     } else if (tipo == -1) {
-                        switch (tamaño) {
-                            case -1:
-                                colorReal = escenaPorPalabras[3];
-                                break;
+                        if (tamano == -1) {
+                            colorReal = escenaPorPalabras[3];
                         }
                     }
-                    // 2 : tipo de gifura ; 4 : tamaño de la figura ; 3 : color de la figura ;
-                    return crearFigura(tipoReal, tamañoReal, colorReal, "");
+                    // 2 : tipo de gifura ; 4 : tamano de la figura ; 3 : color de la figura ;
+                    return crearFigura(tipoReal, tamanoReal, colorReal, "");
                 }
                 break;
 
@@ -175,14 +172,14 @@ public class ProcesarReglas {
     }
 
     /**
-     * Define un estándar para el tamaño a utilizar en el código prolog
+     * Define un estándar para el tamano a utilizar en el código prolog
      * Por ejemplo, traduce chica a chico
      *
-     * @param tamaño que es el tamaño a estandarizar
+     * @param tamano que es el tamano a estandarizar
      * @return String estandarizado
      */
-    private static String normalizarTamaño(String tamaño) {
-        switch (tamaño.charAt(0)) {
+    private static String normalizarTamano(String tamano) {
+        switch (tamano.charAt(0)) {
             case 'c':
                 return "chico";
             case 'g':
@@ -191,12 +188,13 @@ public class ProcesarReglas {
                 return "mediano";
         }
         //no debería haber errores en este punto, but, what gives
-        //tamaño mediano por defecto
+        //tamano mediano por defecto
         return "mediano";
     }
 
     /**
      * Verifica que la cadena proporcionada sea un tipo de figura válido
+     *
      * @param figura que es el tipo de figura
      * @return true si es un tipo admitido
      */
@@ -209,39 +207,41 @@ public class ProcesarReglas {
     }
 
     /**
-     * Verifica que el tamaño sea válido
-     * @param tamaño que es el tamaño de la figura
-     * @return true si es un tamaño soportado
+     * Verifica que el tamano sea válido
+     *
+     * @param tamano que es el tamano de la figura
+     * @return true si es un tamano soportado
      */
-    private static boolean esUnTamañoValido(String tamaño) {
-        if (tamaño.equals("grande") || tamaño.equals("chico") || tamaño.equals("mediano")) {
+    private static boolean esUnTamanoValido(String tamano) {
+        if (tamano.equals("grande") || tamano.equals("chico") || tamano.equals("mediano")) {
             return true;
         }
-        return tamaño.equals("chica") || tamaño.equals("mediana");
+        return tamano.equals("chica") || tamano.equals("mediana");
     }
 
     /**
      * Procesa los parámetros y los convierte a sintaxis Prolog
-     * @param tipo de la figura
-     * @param tamaño de la figura
-     * @param color de la figura
-     * @param X o nombre de la figura
+     *
+     * @param tipo   de la figura
+     * @param tamano de la figura
+     * @param color  de la figura
+     * @param X      o nombre de la figura
      * @return sintaxis en lenguaje Prolog
      */
-    private static String crearFigura(String tipo, String tamaño, String color, String X) {
+    private static String crearFigura(String tipo, String tamano, String color, String X) {
         if (tipo.equals("")) {
             tipo = "cubo";
         }
-        if (tamaño.equals("")) {
-            tamaño.equals("chico");
+        if (tamano.equals("")) {
+            tamano = "chico";
         }
         if (color.equals("")) {
             color = ("azul");
         }
         if (X.equals("")) {
-            X = tipo + tamaño + color + ++cantidadDeCubosAnonimos;
+            X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
         }
-        return "tamaño(" + X.toUpperCase() + "," + "). \n" +
+        return "tamano(" + X.toUpperCase() + "," + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
                 "sobre(" + X.toUpperCase() + ",piso). \n";
@@ -250,14 +250,15 @@ public class ProcesarReglas {
     /**
      * Se intenta procesar la regla de tal suerte que ésta sea traducida a prolog
      * Primeramente, identificando los componentes clave de la misma
+     *
      * @param regla a identificar
      * @return codigo Prolog equivalente
      */
     private static String procesarRegla(String regla) {
         String[] reglaPorPalabras = regla.split(" ");
-        int tamañoDeLaReglaEnPalabras;
-        tamañoDeLaReglaEnPalabras = reglaPorPalabras.length;
-        switch (tamañoDeLaReglaEnPalabras) {
+        int tamanoDeLaReglaEnPalabras;
+        tamanoDeLaReglaEnPalabras = reglaPorPalabras.length;
+        switch (tamanoDeLaReglaEnPalabras) {
             case 11:
                 //la orden es quitar el objeto X sobre el objeto Y
                 if (reglaPorPalabras[0].equals("la") && reglaPorPalabras[1].equals("orden")
@@ -364,6 +365,7 @@ public class ProcesarReglas {
 
     /**
      * Prepara la línea leída para eliminar irregularidades
+     *
      * @param linea a procesar
      * @return la línea procesada
      */
@@ -377,6 +379,7 @@ public class ProcesarReglas {
      * Prepara una línea eliminando los espacios al inicio, final
      * y, en caso de presentarse dos o más consecutivos, los elimina
      * de tal forma que sólo sea uno
+     *
      * @param linea a procesar
      * @return línea procesada
      */
