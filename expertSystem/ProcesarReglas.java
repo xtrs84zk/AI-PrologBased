@@ -200,7 +200,7 @@ public class ProcesarReglas {
                         } else {
                             colorReal = escenaPorPalabras[9];
                         }
-                        return "retract(sobre(nada," + figura1 + "). \n" + crearFigura(tipoReal, tamanoReal, colorReal, "", figura1);
+                        return crearFigura(tipoReal, tamanoReal, colorReal, "", figura1);
                     }
                 }
                 //Arriba del cubo rojo mediana esta una caja chica amarilla cerrada
@@ -233,11 +233,34 @@ public class ProcesarReglas {
                             } else {
                                 colorReal = escenaPorPalabras[7];
                             }
-                            return "retract(sobre(nada," + figura1 + "). \n" + crearFigura(tipoReal, tamanoReal, colorReal, "", figura1, abierta);
+                            return crearFigura(tipoReal, tamanoReal, colorReal, "", figura1, abierta);
                         }
                     }
                 }
                 break;
+            case 9:
+                //arriba de la caja chica amarilla no existen objetos
+                if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("de")
+                        && (escenaPorPalabras[2].equals("la") || escenaPorPalabras[6].equals("no"))
+                        && escenaPorPalabras[7].equals("existen") && escenaPorPalabras[8].equals("objetos")) {
+                    tamano = encontrarTamañoValido(escenaPorPalabras, 3, 4, 5);
+                    tipo = encontrarFiguraValida(escenaPorPalabras, 3, 4, 5);
+                    if (tipo != -1 && tamano != -1) {
+                        tipoReal = escenaPorPalabras[tipo];
+                        tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
+                        if ((tamano == 3 && tipo == 5) || tamano == 5 && tipo == 3) {
+                            colorReal = escenaPorPalabras[4];
+                        } else if ((tamano == 5 && tipo == 4) || (tamano == 4 && tipo == 5)) {
+                            colorReal = escenaPorPalabras[3];
+                        } else {
+                            colorReal = escenaPorPalabras[5];
+                        }
+                    }
+                    return "sobre(nada," + accederFigura(tipoReal, tamanoReal, colorReal) + "). \n";
+                }
+                break;
+            //case 8:
+            //arriba del cilindro amarillo grande no existen objetos
 
         }
         return "";
@@ -343,13 +366,12 @@ public class ProcesarReglas {
             color = ("azul");
         }
         if (X.equals("")) {
-            X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+            X = tipo + tamano + color + cantidadDeCubosAnonimos;
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso). \n" +
-                "sobre(nada," + X.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + ",piso). \n";
     }
 
     /**
@@ -371,20 +393,18 @@ public class ProcesarReglas {
                 color = ("azul");
             }
             if (X.equals("")) {
-                X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+                X = tipo + tamano + color + cantidadDeCubosAnonimos;
             }
             return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                     "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                     "estado(" + X.toUpperCase() + "," + estado + "). \n" +
                     "color(" + X.toUpperCase() + "," + color + "). \n" +
-                    "sobre(" + X.toUpperCase() + ",piso). \n" +
-                    "sobre(nada," + X.toUpperCase() + "). \n";
+                    "sobre(" + X.toUpperCase() + ",piso). \n";
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso). \n" +
-                "sobre(nada," + X.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + ",piso). \n";
     }
 
     /**
@@ -407,13 +427,12 @@ public class ProcesarReglas {
             color = ("azul");
         }
         if (X.equals("")) {
-            X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+            X = tipo + tamano + color + cantidadDeCubosAnonimos;
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n" +
-                "sobre(nada," + X.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
     }
 
     /**
@@ -435,20 +454,18 @@ public class ProcesarReglas {
                 color = ("azul");
             }
             if (X.equals("")) {
-                X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+                X = tipo + tamano + color + cantidadDeCubosAnonimos;
             }
             return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                     "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                     "estado(" + X.toUpperCase() + "," + estado + "). \n" +
                     "color(" + X.toUpperCase() + "," + color + "). \n" +
-                    "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n" +
-                    "sobre(nada," + X.toUpperCase() + "). \n";
+                    "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
         }
         return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n" +
-                "sobre(nada," + X.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
     }
 
     /**
