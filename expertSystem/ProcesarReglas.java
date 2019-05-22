@@ -43,7 +43,7 @@ public class ProcesarReglas {
                     if (!tmp.equals("")) {
                         codigoDeEscenarioAlArchivoPl.add(tmp);
                     } else {
-                        codigoDeEscenarioAlArchivoPl.add("write('Error al definir escenario, linea: " + i + ".");
+                        codigoDeEscenarioAlArchivoPl.add("write('Error al definir escenario, linea: " + (i + 1) + "').");
                     }
                     i++;
                 }
@@ -192,7 +192,7 @@ public class ProcesarReglas {
                     tipo = encontrarFiguraValida(escenaPorPalabras, 8, 9, 10);
                     if (tipo != -1 && tamano != -1) {
                         tipoReal = escenaPorPalabras[tipo];
-                        tamanoReal = escenaPorPalabras[tamano];
+                        tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
                         if ((tamano == 8 && tipo == 9) || tamano == 9 && tipo == 8) {
                             colorReal = escenaPorPalabras[10];
                         } else if ((tamano == 10 && tipo == 9) || (tamano == 9 && tipo == 10)) {
@@ -203,7 +203,42 @@ public class ProcesarReglas {
                         return "retract(sobre(nada," + figura1 + "). \n" + crearFigura(tipoReal, tamanoReal, colorReal, "", figura1);
                     }
                 }
+                //Arriba del cubo rojo mediana esta una caja chica amarilla cerrada
+                else if (escenaPorPalabras[0].equals("arriba") && escenaPorPalabras[1].equals("del")
+                        && (escenaPorPalabras[5].equals("está") || escenaPorPalabras[5].equals("esta"))
+                        && escenaPorPalabras[6].equals("una")) {
+                    tamano = encontrarTamañoValido(escenaPorPalabras, 2, 3, 4);
+                    tipo = encontrarFiguraValida(escenaPorPalabras, 2, 3, 4);
+                    if (tipo != -1 && tamano != -1) {
+                        tipoReal = escenaPorPalabras[tipo];
+                        tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
+                        if ((tamano == 2 && tipo == 4) || tamano == 4 && tipo == 2) {
+                            colorReal = escenaPorPalabras[3];
+                        } else if ((tamano == 2 && tipo == 3) || (tamano == 3 && tipo == 2)) {
+                            colorReal = escenaPorPalabras[4];
+                        } else {
+                            colorReal = escenaPorPalabras[2];
+                        }
+                        String figura1 = accederFigura(tipoReal, tamanoReal, colorReal);
+                        tamano = encontrarTamañoValido(escenaPorPalabras, 7, 8, 9);
+                        tipo = encontrarFiguraValida(escenaPorPalabras, 7, 8, 9);
+                        boolean abierta = (escenaPorPalabras[10].equals("abierta") || escenaPorPalabras[10].equals("abierto"));
+                        if (tipo != -1 && tamano != -1) {
+                            tipoReal = escenaPorPalabras[tipo];
+                            tamanoReal = normalizarTamano(escenaPorPalabras[tamano]);
+                            if ((tamano == 7 && tipo == 9) || tamano == 9 && tipo == 7) {
+                                colorReal = escenaPorPalabras[8];
+                            } else if ((tamano == 7 && tipo == 8) || (tamano == 8 && tipo == 7)) {
+                                colorReal = escenaPorPalabras[9];
+                            } else {
+                                colorReal = escenaPorPalabras[7];
+                            }
+                            return "retract(sobre(nada," + figura1 + "). \n" + crearFigura(tipoReal, tamanoReal, colorReal, "", figura1, abierta);
+                        }
+                    }
+                }
                 break;
+
         }
         return "";
     }
@@ -302,7 +337,7 @@ public class ProcesarReglas {
             tipo = "cubo";
         }
         if (tamano.equals("")) {
-            tamano = "chico";
+            tamano = "mediano";
         }
         if (color.equals("")) {
             color = ("azul");
@@ -310,10 +345,46 @@ public class ProcesarReglas {
         if (X.equals("")) {
             X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
         }
-        return "tamano(" + X.toUpperCase() + "," + "). \n" +
+        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso). \n";
+                "sobre(" + X.toUpperCase() + ",piso). \n" +
+                "sobre(nada," + X.toUpperCase() + "). \n";
+    }
+
+    /**
+     * Procesa los parámetros y los convierte a sintaxis Prolog
+     *
+     * @param tipo   de la figura
+     * @param tamano de la figura
+     * @param color  de la figura
+     * @param X      o nombre de la figura
+     * @return sintaxis en lenguaje Prolog
+     */
+    private static String crearFigura(String tipo, String tamano, String color, String X, boolean abierta) {
+        String estado = abierta ? "open" : "closed";
+        if (tipo.equals("caja")) {
+            if (tamano.equals("")) {
+                tamano = "mediano";
+            }
+            if (color.equals("")) {
+                color = ("azul");
+            }
+            if (X.equals("")) {
+                X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+            }
+            return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
+                    "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
+                    "estado(" + X.toUpperCase() + "," + estado + "). \n" +
+                    "color(" + X.toUpperCase() + "," + color + "). \n" +
+                    "sobre(" + X.toUpperCase() + ",piso). \n" +
+                    "sobre(nada," + X.toUpperCase() + "). \n";
+        }
+        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
+                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
+                "color(" + X.toUpperCase() + "," + color + "). \n" +
+                "sobre(" + X.toUpperCase() + ",piso). \n" +
+                "sobre(nada," + X.toUpperCase() + "). \n";
     }
 
     /**
@@ -330,7 +401,7 @@ public class ProcesarReglas {
             tipo = "cubo";
         }
         if (tamano.equals("")) {
-            tamano = "chico";
+            tamano = "mediano";
         }
         if (color.equals("")) {
             color = ("azul");
@@ -338,10 +409,46 @@ public class ProcesarReglas {
         if (X.equals("")) {
             X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
         }
-        return "tamano(" + X.toUpperCase() + "," + "). \n" +
+        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
                 "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
                 "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n";
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n" +
+                "sobre(nada," + X.toUpperCase() + "). \n";
+    }
+
+    /**
+     * Procesa los parámetros y los convierte a sintaxis Prolog
+     *
+     * @param tipo   de la figura
+     * @param tamano de la figura
+     * @param color  de la figura
+     * @param X      o nombre de la figura
+     * @return sintaxis en lenguaje Prolog
+     */
+    private static String crearFigura(String tipo, String tamano, String color, String X, String Y, boolean abierta) {
+        String estado = abierta ? "open" : "closed";
+        if (tipo.equals("caja")) {
+            if (tamano.equals("")) {
+                tamano = "mediano";
+            }
+            if (color.equals("")) {
+                color = ("azul");
+            }
+            if (X.equals("")) {
+                X = tipo + tamano + color + ++cantidadDeCubosAnonimos;
+            }
+            return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
+                    "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
+                    "estado(" + X.toUpperCase() + "," + estado + "). \n" +
+                    "color(" + X.toUpperCase() + "," + color + "). \n" +
+                    "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n" +
+                    "sobre(nada," + X.toUpperCase() + "). \n";
+        }
+        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
+                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
+                "color(" + X.toUpperCase() + "," + color + "). \n" +
+                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "). \n" +
+                "sobre(nada," + X.toUpperCase() + "). \n";
     }
 
     /**
