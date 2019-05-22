@@ -27,6 +27,7 @@ public class ProcesarReglas {
         //guardando el archivo de reglas procesado a un .pl
         try {
             escribirElResultadoAUnArchivo(codigoDeReglasAlArchivoPl, rutaAGuardarElArchivoDeReglas);
+            System.out.println("Se han procesado las reglas.");
         } catch (Exception f) {
             f.printStackTrace();
         }
@@ -51,6 +52,7 @@ public class ProcesarReglas {
                 try {
                     Collections.sort(codigoDeEscenarioAlArchivoPl);
                     escribirElResultadoAUnArchivo(codigoDeEscenarioAlArchivoPl, rutaParaGuardarElEscenario);
+                    System.out.println("Se ha procesado el escenario.");
                 } catch (Exception k) {
                     System.err.println("Hubo un error al guardar el archivo de escenario.");
                 }

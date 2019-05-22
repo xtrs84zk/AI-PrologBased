@@ -17,12 +17,6 @@
 %%Accesando al archivo donde se describe el escenario
 %%Fragmento adaptado de http://cs.union.edu/~striegnk/learn-prolog-now/html/node106.html
 
-%%Cargando las reglas a la base de conocimiento, i guess
-%%consult('rules.pl').
-
-%%Procesando el lenguaje natural de las reglas
-%%idk, procesar, i guess (?)
-
 %%Procesando la entrada a la línea de comandos
 lectura:- write('> '),
           readln(LINEA),
