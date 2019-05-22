@@ -28,5 +28,3 @@ La caja X está cerrada
 La caja X está vacía
 Entonces
 Abrir la caja X
-
-Si

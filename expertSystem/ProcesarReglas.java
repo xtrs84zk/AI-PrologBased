@@ -5,7 +5,6 @@ import java.util.Collections;
 
 public class ProcesarReglas {
     private static ArrayList<String> codigoDeReglasAlArchivoPl;
-
     public static void main(String[] args) {
         String rutaAGuardarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.pl";
         String rutaParaCargarElArchivoDeReglas = "/Users/xtrs84zk/Documents/AI/AI-PrologBased/expertSystem/reglas.txt";
@@ -389,10 +388,10 @@ public class ProcesarReglas {
         if (X.equals("")) {
             X = tipo + tamano + color;
         }
-        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
-                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
-                "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso). ";
+        return "tamano(" + X.toLowerCase() + "," + tamano + "). \n" +
+                "tipo(" + X.toLowerCase() + "," + tipo + "). \n" +
+                "color(" + X.toLowerCase() + "," + color + "). \n" +
+                "sobre(" + X.toLowerCase() + ",piso). ";
     }
 
     /**
@@ -416,16 +415,16 @@ public class ProcesarReglas {
             if (X.equals("")) {
                 X = tipo + tamano + color;
             }
-            return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
-                    "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
-                    "estado(" + X.toUpperCase() + "," + estado + "). \n" +
-                    "color(" + X.toUpperCase() + "," + color + "). \n" +
-                    "sobre(" + X.toUpperCase() + ",piso).";
+            return "tamano(" + X.toLowerCase() + "," + tamano + "). \n" +
+                    "tipo(" + X.toLowerCase() + "," + tipo + "). \n" +
+                    "estado(" + X.toLowerCase() + "," + estado + "). \n" +
+                    "color(" + X.toLowerCase() + "," + color + "). \n" +
+                    "sobre(" + X.toLowerCase() + ",piso).";
         }
-        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
-                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
-                "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + ",piso).";
+        return "tamano(" + X.toLowerCase() + "," + tamano + "). \n" +
+                "tipo(" + X.toLowerCase() + "," + tipo + "). \n" +
+                "color(" + X.toLowerCase() + "," + color + "). \n" +
+                "sobre(" + X.toLowerCase() + ",piso).";
     }
 
     /**
@@ -450,10 +449,10 @@ public class ProcesarReglas {
         if (X.equals("")) {
             X = tipo + tamano + color;
         }
-        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
-                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
-                "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ").";
+        return "tamano(" + X.toLowerCase() + "," + tamano + "). \n" +
+                "tipo(" + X.toLowerCase() + "," + tipo + "). \n" +
+                "color(" + X.toLowerCase() + "," + color + "). \n" +
+                "sobre(" + X.toLowerCase() + "," + Y.toLowerCase() + ").";
     }
 
     /**
@@ -463,6 +462,7 @@ public class ProcesarReglas {
      * @param tamano de la figura
      * @param color  de la figura
      * @param X      o nombre de la figura
+     * @param Y      o nombre de la figura debajo
      * @return sintaxis en lenguaje Prolog
      */
     private static String crearFigura(String tipo, String tamano, String color, String X, String Y, boolean abierta) {
@@ -477,16 +477,16 @@ public class ProcesarReglas {
             if (X.equals("")) {
                 X = tipo + tamano + color;
             }
-            return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
-                    "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
-                    "estado(" + X.toUpperCase() + "," + estado + "). \n" +
-                    "color(" + X.toUpperCase() + "," + color + "). \n" +
-                    "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ").";
+            return "tamano(" + X.toLowerCase() + "," + tamano + "). \n" +
+                    "tipo(" + X.toLowerCase() + "," + tipo + "). \n" +
+                    "estado(" + X.toLowerCase() + "," + estado + "). \n" +
+                    "color(" + X.toLowerCase() + "," + color + "). \n" +
+                    "sobre(" + X.toLowerCase() + "," + Y.toLowerCase() + ").";
         }
-        return "tamano(" + X.toUpperCase() + "," + tamano + "). \n" +
-                "tipo(" + X.toUpperCase() + "," + tipo + "). \n" +
-                "color(" + X.toUpperCase() + "," + color + "). \n" +
-                "sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + ").";
+        return "tamano(" + X.toLowerCase() + "," + tamano + "). \n" +
+                "tipo(" + X.toLowerCase() + "," + tipo + "). \n" +
+                "color(" + X.toLowerCase() + "," + color + "). \n" +
+                "sobre(" + X.toLowerCase() + "," + Y.toLowerCase() + ").";
     }
 
     /**
@@ -498,7 +498,7 @@ public class ProcesarReglas {
      * @return nombre de la figura
      */
     private static String accederFigura(String tipo, String tamano, String color) {
-        return (tipo + tamano + color).toUpperCase();
+        return (tipo + tamano + color).toLowerCase();
     }
 
     /**
@@ -565,8 +565,8 @@ public class ProcesarReglas {
                 //abrir la caja X
                 if (reglaPorPalabras[0].equals("abrir") && reglaPorPalabras[1].equals("la")
                         && reglaPorPalabras[2].equals("caja")) {
-                    return "retract(estado(" + reglaPorPalabras[3] + "," + "closed)), \n"
-                            + "assert(estado(" + reglaPorPalabras[3] + "," + "open))";
+                    return "retract(estado(" + reglaPorPalabras[3].toUpperCase() + "," + "closed)), \n"
+                            + "assert(estado(" + reglaPorPalabras[3].toUpperCase() + "," + "open))";
 
                 }
                 break;
@@ -626,6 +626,7 @@ public class ProcesarReglas {
     private static String abrirProlog(String X) {
         return "abrirCaja(" + X + ")";
     }
+
     private static String moverProlog(String X, String Y) {
         return "mover(" + X.toUpperCase() + "," + Y.toUpperCase() + ")";
     }
@@ -635,8 +636,9 @@ public class ProcesarReglas {
     }
 
     private static String verificacionDeCajaCerradaProlog(String X) {
-        return "estado(" + X + "," + "closed)";
+        return "estado(" + X.toUpperCase() + "," + "closed)";
     }
+
     private static String ponerEncima(String X, String Y) {
         return "assert(sobre(" + X.toUpperCase() + "," + Y.toUpperCase() + "))";
     }

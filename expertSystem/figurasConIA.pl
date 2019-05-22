@@ -10,12 +10,9 @@
 :- dynamic tipo_de_objeto/2.
 :- dynamic lectura/0.
 :- dynamic writeln/1.
+%%cargando escenario y reglas
 :- include('scenario').
 :- include('reglas').
-%%cargando escenario y reglas
-
-%%Accesando al archivo donde se describe el escenario
-%%Fragmento adaptado de http://cs.union.edu/~striegnk/learn-prolog-now/html/node106.html
 
 %%Procesando la entrada a la línea de comandos
 lectura:- write('> '),
