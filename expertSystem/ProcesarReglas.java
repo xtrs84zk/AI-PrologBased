@@ -164,7 +164,7 @@ public class ProcesarReglas {
                             colorReal = escenaPorPalabras[3];
                         }
                     }
-                    // 2 : tipo de gifura ; 4 : tamano de la figura ; 3 : color de la figura ;
+                    // 2 : tipo de figura ; 4 : tamano de la figura ; 3 : color de la figura ;
                     return crearFigura(tipoReal, tamanoReal, colorReal, "");
                 }
                 //arriba del cilindro amarillo grande no existen objetos
@@ -615,7 +615,7 @@ public class ProcesarReglas {
                 if (reglaPorPalabras[0].equals("quitar") && reglaPorPalabras[1].equals("el")
                         && (reglaPorPalabras[2].equals("objeto")) && reglaPorPalabras[4].equals("del")
                         && reglaPorPalabras[5].equals("piso")) {
-                    return "retract(sobre(" + reglaPorPalabras[3].toUpperCase() + ",piso)";
+                    return "retract(sobre(" + reglaPorPalabras[3].toUpperCase() + ",piso))";
                 }
             default:
                 return "";
