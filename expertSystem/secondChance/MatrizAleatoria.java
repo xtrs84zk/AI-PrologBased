@@ -48,16 +48,16 @@ public class MatrizAleatoria {
             //burbuja inversa
             if (menorResultado > sumarColumna(i)) {
                 menorResultado = sumarColumna(i);
-                resultadoTotalMenor = "La columna con menor suma es " + i + " con " + sumarColumna(i) + " por total. ";
+                resultadoTotalMenor = "La columna con menor suma es #" + i + " con " + sumarColumna(i) + " por total. ";
             }
-            resultadoParcial += "La suma en la columna " + i + " es : " + sumarColumna(i) + "\n";
+            resultadoParcial += "La suma en la columna #" + i + " es : " + sumarColumna(i) + "\n";
         }
 
 
         //Mostrando los resultados
-        System.out.println(resultadoParcial);
+        //System.out.println(resultadoParcial);
         System.out.println(resultadoTotalMenor);
-        System.out.println(resultadoTotalMayor);
+        //System.out.println(resultadoTotalMayor);
     }
 
     /**
