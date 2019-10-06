@@ -1,7 +1,3 @@
-quitar(X,Y):-
-sobre(X,Y),
-sobre(nada,X),
-assert(sobre(X,piso)),
 assert(sobre(nada,Y)),
 true. 
 

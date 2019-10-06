@@ -1,9 +1,9 @@
 Si
-La orden es quitar el objeto X sobre el objeto Y 
-El objeto X está encima del objeto Y 
-El objeto X está vacío 
+La orden     es   		eliminar X sobre Y 
+El objeto X está encima del 		objeto Y 
+El objeto X está 	vacío 
 Entonces 
-Poner el objeto X en el piso 
+Poner el objeto X en el 		piso 
 Limpiar el objeto Y 
  
 Si 
@@ -28,3 +28,9 @@ La caja X está cerrada
 La caja X está vacía
 Entonces
 Abrir la caja X
+
+Si
+La orden es crear el objeto X
+El objeto X no existe
+Entonces
+Crear el objeto X
