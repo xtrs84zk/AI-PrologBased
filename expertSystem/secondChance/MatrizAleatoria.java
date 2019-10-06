@@ -4,33 +4,28 @@ import java.util.Arrays;
 import java.util.Random;
 import java.util.Scanner;
 
-
 public class MatrizAleatoria {
+    //variable global donde se almacena la matriz
     private static int[][] matriz;
 
     public static void main(String[] args) {
         Random rd = new Random();
         Scanner sc = new Scanner(System.in);
         String resultadoParcial = "";
-        String resultadoTotalMayor = "", resultadoTotalMenor = "";
+        String resultadoTotalMayor = "";
+        String resultadoTotalMenor = "";
 
-        /*System.out.println("Ingresar el numero de COLUMNAS");
-        int columnas = sc.nextInt();
-        System.out.println("Ingresar el numero de FILAS");
-        int filas = sc.nextInt();*/
-
-
+        //Pidiendo variables para inicializar la matriz
         System.out.print("Ingrese la cantidad de elementos por lado: ");
         int cantidadDeElementosPorLado = sc.nextInt();
-
-
         matriz = new int[cantidadDeElementosPorLado][cantidadDeElementosPorLado];
 
+        //Inicializando la matriz con valores aleatorios
         for (int f = 0; f < matriz.length; f++) {
-            java.util.Arrays.setAll(matriz[f], c -> rd.nextInt(99999));
+            java.util.Arrays.setAll(matriz[f], c -> rd.nextInt(10));
         }
 
-        //Imprimiendo la matriz
+        //Mostrando la matriz
         System.out.println();
         System.out.println(Arrays.deepToString(matriz).replace("], ", "]\n").replace("[[", "[").replace("]]", "]"));
 
@@ -53,7 +48,6 @@ public class MatrizAleatoria {
             resultadoParcial += "La suma en la columna #" + i + " es : " + sumarColumna(i) + "\n";
         }
 
-
         //Mostrando los resultados
         //System.out.println(resultadoParcial);
         System.out.println(resultadoTotalMenor);
@@ -68,8 +62,8 @@ public class MatrizAleatoria {
      */
     private static int sumarColumna(int i) {
         int sumaColumna = 0;
-        for (int j = 0; j < matriz.length; j++) {
-            sumaColumna += matriz[j][i];
+        for (int[] ints : matriz) {
+            sumaColumna += ints[i];
         }
         return sumaColumna;
     }

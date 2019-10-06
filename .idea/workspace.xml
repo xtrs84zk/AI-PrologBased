@@ -3,11 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="64eb18ce-b7d2-47e2-bdb9-fe202ce14a26" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/expertSystem/reglas.pl" beforeDir="false" afterPath="$PROJECT_DIR$/expertSystem/reglas.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AI-PrologBased/reglas.pl" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AI-PrologBased/reglas.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AI-PrologBased/reglas.txt" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AI-PrologBased/reglas.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/AI-PrologBased/sistemaExperto.pl" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/AI-PrologBased/sistemaExperto.pl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/second chance/MatrizAleatoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/expertSystem/secondChance/MatrizAleatoria.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/expertSystem/secondChance/MatrizAleatoria.java" beforeDir="false" afterPath="$PROJECT_DIR$/expertSystem/secondChance/MatrizAleatoria.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -24,8 +20,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/expertSystem/secondChance/MatrizAleatoria.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="38">
-              <caret line="32" column="29" selection-start-line="32" selection-start-column="29" selection-end-line="32" selection-end-column="29" />
+            <state relative-caret-position="92">
+              <caret line="7" column="49" selection-start-line="7" selection-start-column="49" selection-end-line="7" selection-end-column="49" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -228,7 +224,9 @@
     <MESSAGE value="why" />
     <MESSAGE value="can't remmember" />
     <MESSAGE value="Jaime's update" />
-    <option name="LAST_COMMIT_MESSAGE" value="Jaime's update" />
+    <MESSAGE value="Jaime's update -&gt;" />
+    <MESSAGE value="Jaime's update -&gt; //cleaned output" />
+    <option name="LAST_COMMIT_MESSAGE" value="Jaime's update -&gt; //cleaned output" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
     <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
@@ -273,8 +271,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/expertSystem/secondChance/MatrizAleatoria.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="38">
-          <caret line="32" column="29" selection-start-line="32" selection-start-column="29" selection-end-line="32" selection-end-column="29" />
+        <state relative-caret-position="92">
+          <caret line="7" column="49" selection-start-line="7" selection-start-column="49" selection-end-line="7" selection-end-column="49" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
